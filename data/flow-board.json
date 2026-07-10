@@ -26,6 +26,8 @@
           "dueDate": "2026-07-14",
           "status": "daily",
           "archived": false,
+          "order": 1783592364927,
+          "subtasks": [],
           "createdAt": "2026-07-09T05:33:56.521Z",
           "updatedAt": "2026-07-09T05:33:56.521Z",
           "completedBy": null,
@@ -34,15 +36,12 @@
         {
           "id": "tmrd2h7xuh97lpw4",
           "title": "Follow up on below apps",
-          "description": "1. Microsoft Exchange Online – Shared Mailbox\n2. Azure DevOps\n3. SAP DSP\n4. Azure Databricks",
+          "description": "1. Microsoft Exchange Online – Shared Mailbox\n2. Azure DevOps - Krunal is working (API is testing)\n3. SAP DSP - Ticket is raised for lower env\n4. Azure Databricks - Saurabh",
           "priority": "medium",
-          "dueDate": "2026-07-13",
+          "dueDate": "2026-07-14",
           "status": "daily",
           "archived": false,
-          "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-09T07:58:34.870Z",
-          "completedBy": null,
-          "completedOn": null,
+          "order": 1783576299706,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
@@ -65,7 +64,10 @@
               "done": false
             }
           ],
-          "order": 1783576299706
+          "createdAt": "2026-07-09T05:29:16.146Z",
+          "updatedAt": "2026-07-09T11:22:15.929Z",
+          "completedBy": null,
+          "completedOn": null
         },
         {
           "id": "tmrbsewbax6u7d6y",
@@ -75,24 +77,27 @@
           "dueDate": "2026-07-10",
           "status": "daily",
           "archived": false,
+          "order": 1783584332316.5,
+          "subtasks": [],
           "createdAt": "2026-07-08T07:59:45.430Z",
-          "updatedAt": "2026-07-08T09:56:02.504Z",
+          "updatedAt": "2026-07-09T11:19:23.790Z",
           "completedBy": null,
           "completedOn": null
         },
         {
           "id": "tmrbsdx3qty6kguh",
-          "title": "eDiscovery Demo tomorrow",
-          "description": "eDiscovery Demo tomorrow",
+          "title": "eDiscovery Demo Monday",
+          "description": "eDiscovery Demo Monday",
           "priority": "medium",
-          "dueDate": "2026-07-09",
+          "dueDate": "2026-07-13",
           "status": "inprogress",
           "archived": false,
+          "order": -1,
+          "subtasks": [],
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-09T06:31:45.508Z",
+          "updatedAt": "2026-07-09T11:19:51.874Z",
           "completedBy": null,
-          "completedOn": null,
-          "order": -1
+          "completedOn": null
         },
         {
           "id": "tmrbsdfcsmuj2t3w",
@@ -100,12 +105,14 @@
           "description": "Exchange Online with Who has what access",
           "priority": "high",
           "dueDate": "2026-07-09",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
+          "order": 1783592762271,
+          "subtasks": [],
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-08T07:59:53.537Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-09T11:19:00.879Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-09T11:19:00.879Z"
         },
         {
           "id": "tmrdd2jplnk12zlt",
@@ -121,11 +128,26 @@
           "updatedAt": "2026-07-09T10:26:02.270Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-09T10:26:02.270Z"
+        },
+        {
+          "id": "tmrespm0jct5hkou",
+          "title": "SC2.0 Installation of AT OT for PROD",
+          "description": "SC2.0 Installation of AT OT for PROD",
+          "priority": "low",
+          "dueDate": "2026-07-20",
+          "status": "daily",
+          "archived": false,
+          "order": 1783679483827,
+          "subtasks": [],
+          "createdAt": "2026-07-10T10:31:23.827Z",
+          "updatedAt": "2026-07-10T10:31:23.827Z",
+          "completedBy": null,
+          "completedOn": null
         }
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_desc",
+        "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
         "userName": "Rakesh"
