@@ -6,7 +6,7 @@ A modern, responsive, offline-first Kanban-style To-Do application built with pu
 ![HTML](https://img.shields.io/badge/HTML-5-orange)
 ![CSS](https://img.shields.io/badge/CSS-3-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
-
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 ---
 
 ## ✨ Features
@@ -309,7 +309,7 @@ Feel free to:
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
