@@ -12,9 +12,25 @@
           "status": "inprogress",
           "archived": false,
           "order": -0.5,
-          "subtasks": [],
+          "subtasks": [
+            {
+              "id": "tmrf2iktbi5vei03",
+              "text": "Access Review",
+              "done": true
+            },
+            {
+              "id": "tmrf2ivhuv6xxlzd",
+              "text": "Dashboards",
+              "done": true
+            },
+            {
+              "id": "tmrf2iz232cqze1p",
+              "text": "Analytics",
+              "done": true
+            }
+          ],
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-10T13:17:18.156Z",
+          "updatedAt": "2026-07-10T15:06:14.656Z",
           "completedBy": null,
           "completedOn": null
         },
