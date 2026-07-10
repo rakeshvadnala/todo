@@ -27,10 +27,20 @@
               "id": "tmrf2iz232cqze1p",
               "text": "Analytics",
               "done": true
+            },
+            {
+              "id": "tmrf2jlrkhzr2jpp",
+              "text": "Disable User for >= 180days",
+              "done": false
+            },
+            {
+              "id": "tmrf2jvvpsy3cdrw",
+              "text": "Delete user after disable 90days",
+              "done": false
             }
           ],
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-10T15:06:14.656Z",
+          "updatedAt": "2026-07-10T15:06:54.171Z",
           "completedBy": null,
           "completedOn": null
         },
