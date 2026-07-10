@@ -143,14 +143,55 @@
           "updatedAt": "2026-07-10T10:31:23.827Z",
           "completedBy": null,
           "completedOn": null
+        },
+        {
+          "id": "tmrf2ffkayief0ef",
+          "title": "Welcome to Flow 👋",
+          "description": "This board saves everything locally in your browser. Try dragging this card to another column.",
+          "priority": "medium",
+          "dueDate": null,
+          "status": "daily",
+          "archived": false,
+          "order": 1783695405066,
+          "createdAt": "2026-07-10T13:03:25.066Z",
+          "updatedAt": "2026-07-10T13:03:25.066Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrf2ffkepzw89r0",
+          "title": "Example: in-progress work",
+          "description": "Tasks here show up in the middle column until they're done.",
+          "priority": "high",
+          "dueDate": "2026-07-12",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1783695605066,
+          "createdAt": "2026-07-10T14:03:25.066Z",
+          "updatedAt": "2026-07-10T14:33:25.066Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrf2ffkerpdvz5j",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1783695705066,
+          "createdAt": "2026-07-10T11:43:25.066Z",
+          "updatedAt": "2026-07-10T14:53:25.066Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-10T14:53:25.066Z"
         }
       ],
       "settings": {
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all",
-        "userName": "Rakesh"
+        "statusFilter": "all"
       }
     },
     "rajan": {
