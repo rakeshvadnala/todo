@@ -132,11 +132,11 @@
           "priority": "high",
           "dueDate": "2026-07-09",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762271,
           "subtasks": [],
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-09T11:19:00.879Z",
+          "updatedAt": "2026-07-11T08:01:16.696Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-09T11:19:00.879Z"
         },
@@ -147,11 +147,11 @@
           "priority": "high",
           "dueDate": "2026-07-09",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762270,
           "subtasks": [],
           "createdAt": "2026-07-09T10:25:47.337Z",
-          "updatedAt": "2026-07-09T10:26:02.270Z",
+          "updatedAt": "2026-07-11T08:01:11.165Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-09T10:26:02.270Z"
         },
@@ -181,6 +181,90 @@
     "rajan": {
       "displayName": "Rajan",
       "tasks": [],
+      "settings": {
+        "theme": "light",
+        "sort": "manual",
+        "priorityFilter": "all",
+        "statusFilter": "all"
+      }
+    },
+    "saurabh": {
+      "displayName": "Saurabh",
+      "tasks": [
+        {
+          "id": "tmrg2s0705tahzva",
+          "title": "Welcome to Flow 👋",
+          "description": "This board saves everything locally in your browser. Try dragging this card to another column.",
+          "priority": "medium",
+          "dueDate": null,
+          "status": "daily",
+          "archived": false,
+          "order": 1783756457852,
+          "createdAt": "2026-07-11T06:00:57.852Z",
+          "updatedAt": "2026-07-11T06:00:57.852Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrg2s0715uzmpgv",
+          "title": "Try adding a new task",
+          "description": "Click \"New task\" up top, or press N on your keyboard.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "daily",
+          "archived": false,
+          "order": 1783756557852,
+          "subtasks": [
+            {
+              "id": "tmrg2s071ucvux3e",
+              "text": "Open the New task modal",
+              "done": true
+            },
+            {
+              "id": "tmrg2s071ky9nel2",
+              "text": "Give it a title and priority",
+              "done": false
+            },
+            {
+              "id": "tmrg2s0710ahkfzc",
+              "text": "Try checking this box right on the card",
+              "done": false
+            }
+          ],
+          "createdAt": "2026-07-11T06:30:57.852Z",
+          "updatedAt": "2026-07-11T06:30:57.852Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrg2s071wc7agbh",
+          "title": "Example: in-progress work",
+          "description": "Tasks here show up in the middle column until they're done.",
+          "priority": "high",
+          "dueDate": "2026-07-13",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1783756657852,
+          "createdAt": "2026-07-11T07:00:57.852Z",
+          "updatedAt": "2026-07-11T07:30:57.852Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrg2s071kvvixax",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1783756757852,
+          "createdAt": "2026-07-11T04:40:57.852Z",
+          "updatedAt": "2026-07-11T07:50:57.852Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-11T07:50:57.852Z"
+        }
+      ],
       "settings": {
         "theme": "light",
         "sort": "manual",
