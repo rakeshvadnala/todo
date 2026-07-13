@@ -145,9 +145,15 @@
           "status": "inprogress",
           "archived": false,
           "order": -0.75,
-          "subtasks": [],
+          "subtasks": [
+            {
+              "id": "tmrje2dxebrjl7y9",
+              "text": "Need to work on the feedback provided during demo",
+              "done": false
+            }
+          ],
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-13T15:39:56.352Z",
+          "updatedAt": "2026-07-13T15:40:20.484Z",
           "completedBy": null,
           "completedOn": null
         },
