@@ -142,14 +142,14 @@
           "description": "Exchange Online with Who has what access",
           "priority": "high",
           "dueDate": "2026-07-09",
-          "status": "completed",
+          "status": "inprogress",
           "archived": false,
-          "order": 1783592762271,
+          "order": -0.75,
           "subtasks": [],
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-13T15:39:51.684Z",
-          "completedBy": "Rakesh",
-          "completedOn": "2026-07-09T11:19:00.879Z"
+          "updatedAt": "2026-07-13T15:39:56.352Z",
+          "completedBy": null,
+          "completedOn": null
         },
         {
           "id": "tmrdd2jplnk12zlt",
