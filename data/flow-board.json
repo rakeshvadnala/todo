@@ -164,11 +164,11 @@
           "priority": "high",
           "dueDate": "2026-07-09",
           "status": "completed",
-          "archived": true,
+          "archived": false,
           "order": 1783592762270,
           "subtasks": [],
           "createdAt": "2026-07-09T10:25:47.337Z",
-          "updatedAt": "2026-07-11T08:01:11.165Z",
+          "updatedAt": "2026-07-13T15:40:46.498Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-09T10:26:02.270Z"
         },
