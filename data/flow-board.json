@@ -175,8 +175,7 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all",
-        "userName": "Rakesh"
+        "statusFilter": "all"
       }
     },
     "rajan": {
