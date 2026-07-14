@@ -52,8 +52,6 @@
           "dueDate": "2026-07-14",
           "status": "daily",
           "archived": false,
-          "order": 1783592364927,
-          "subtasks": [],
           "createdAt": "2026-07-09T05:33:56.521Z",
           "updatedAt": "2026-07-09T05:33:56.521Z",
           "completedBy": null,
@@ -190,7 +188,7 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "manual",
+        "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "userName": "Rakesh"
