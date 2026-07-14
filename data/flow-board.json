@@ -18,14 +18,14 @@
               "description": "",
               "priority": "medium",
               "dueDate": null,
-              "status": "inprogress",
+              "status": "completed",
               "archived": false,
-              "order": 1784035181981,
+              "order": 1784035189159,
               "subtasks": [],
               "createdAt": "2026-07-14T13:19:35.057Z",
-              "updatedAt": "2026-07-14T13:19:41.981Z",
-              "completedBy": null,
-              "completedOn": null
+              "updatedAt": "2026-07-14T13:19:49.159Z",
+              "completedBy": "Rakesh",
+              "completedOn": "2026-07-14T13:19:49.159Z"
             },
             {
               "id": "tmrkoh64m9tdamj5",
