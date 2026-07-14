@@ -118,7 +118,7 @@
           "dueDate": "2026-07-13",
           "status": "inprogress",
           "archived": false,
-          "order": -1,
+          "order": -1.75,
           "subtasks": [
             {
               "id": "tmrje0p025zm63sy",
@@ -132,7 +132,7 @@
             }
           ],
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-14T06:50:25.683Z",
+          "updatedAt": "2026-07-14T06:50:35.214Z",
           "completedBy": null,
           "completedOn": null
         },
