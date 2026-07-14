@@ -11,7 +11,23 @@
         {
           "id": "tmrkogt63pi0jsl1",
           "name": "EGA",
-          "tasks": []
+          "tasks": [
+            {
+              "id": "tmrkoh64m9tdamj5",
+              "title": "Test1",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784035168582,
+              "subtasks": [],
+              "createdAt": "2026-07-14T13:19:28.582Z",
+              "updatedAt": "2026-07-14T13:19:28.582Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
         }
       ],
       "settings": {
