@@ -11,7 +11,7 @@
           "dueDate": "2026-07-09",
           "status": "inprogress",
           "archived": false,
-          "order": -0.5,
+          "order": -2.75,
           "subtasks": [
             {
               "id": "tmrf2iktbi5vei03",
@@ -40,7 +40,7 @@
             }
           ],
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-10T15:06:54.171Z",
+          "updatedAt": "2026-07-14T10:41:44.542Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -67,7 +67,7 @@
           "dueDate": "2026-07-14",
           "status": "daily",
           "archived": false,
-          "order": 1783576299706,
+          "order": 1783584332315.5,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
@@ -91,7 +91,7 @@
             }
           ],
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-09T11:22:15.929Z",
+          "updatedAt": "2026-07-14T10:18:08.679Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -132,7 +132,7 @@
             }
           ],
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-14T06:50:35.214Z",
+          "updatedAt": "2026-07-14T10:41:47.401Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -153,7 +153,7 @@
             }
           ],
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-13T15:40:20.484Z",
+          "updatedAt": "2026-07-14T10:29:35.240Z",
           "completedBy": null,
           "completedOn": null
         },
