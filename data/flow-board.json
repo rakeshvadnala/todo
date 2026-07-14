@@ -13,17 +13,32 @@
           "name": "EGA",
           "tasks": [
             {
+              "id": "tmrkohb4h32ulsxr",
+              "title": "test2",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "inprogress",
+              "archived": false,
+              "order": 1784035181981,
+              "subtasks": [],
+              "createdAt": "2026-07-14T13:19:35.057Z",
+              "updatedAt": "2026-07-14T13:19:41.981Z",
+              "completedBy": null,
+              "completedOn": null
+            },
+            {
               "id": "tmrkoh64m9tdamj5",
               "title": "Test1",
               "description": "",
               "priority": "medium",
               "dueDate": null,
-              "status": "daily",
+              "status": "inprogress",
               "archived": false,
-              "order": 1784035168582,
+              "order": 1784035181980,
               "subtasks": [],
               "createdAt": "2026-07-14T13:19:28.582Z",
-              "updatedAt": "2026-07-14T13:19:28.582Z",
+              "updatedAt": "2026-07-14T13:19:45.878Z",
               "completedBy": null,
               "completedOn": null
             }
