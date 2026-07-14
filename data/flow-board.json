@@ -11,7 +11,7 @@
           "dueDate": "2026-07-09",
           "status": "inprogress",
           "archived": false,
-          "order": -0.5,
+          "order": 0.25,
           "subtasks": [
             {
               "id": "tmrf2iktbi5vei03",
@@ -40,7 +40,7 @@
             }
           ],
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-10T15:06:54.171Z",
+          "updatedAt": "2026-07-14T10:29:03.252Z",
           "completedBy": null,
           "completedOn": null
         },
