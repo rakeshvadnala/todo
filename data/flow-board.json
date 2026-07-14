@@ -30,15 +30,21 @@
             {
               "id": "tmrkoh64m9tdamj5",
               "title": "Test1",
-              "description": "",
-              "priority": "medium",
-              "dueDate": null,
+              "description": "werft",
+              "priority": "high",
+              "dueDate": "2026-07-15",
               "status": "inprogress",
               "archived": false,
               "order": 1784035181980,
-              "subtasks": [],
+              "subtasks": [
+                {
+                  "id": "tmrkoinfs96vgv29",
+                  "text": "12345",
+                  "done": false
+                }
+              ],
               "createdAt": "2026-07-14T13:19:28.582Z",
-              "updatedAt": "2026-07-14T13:19:45.878Z",
+              "updatedAt": "2026-07-14T13:20:45.620Z",
               "completedBy": null,
               "completedOn": null
             }
