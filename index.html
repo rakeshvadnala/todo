@@ -6,8 +6,8 @@
 <title>Flow - Daily Task Board</title>
 <!-- <link rel="icon" type="image/x-icon" href="./images/favicon.ico"> -->
 <meta name="description" content="A local, offline Kanban-style to-do board.">
-<link rel="stylesheet" href="./css/style.css">
-<link rel="stylesheet" href="./css/custom-ui.css">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./custom-ui.css">
 </head>
 <body data-theme="dark">
 
@@ -130,6 +130,14 @@
     <option value="completed">Completed only</option>
   </select>
 
+  <select class="select" id="projectFilterSelect">
+    <option value="all">All projects</option>
+    <option value="none">No project</option>
+  </select>
+  <button class="icon-btn" id="manageProjectsBtn" title="Manage projects">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-8l-2-2H5a2 2 0 0 0-2 2z"/><path d="M12 11v4M10 13h4"/></svg>
+  </button>
+
   <select class="select" id="sortSelect">
     <option value="manual">Board order (drag position)</option>
     <option value="created_desc">Newest created</option>
@@ -197,6 +205,19 @@
               <input type="text" id="subtaskInput" maxlength="200" placeholder="Add a subtask and press Enter…">
               <button type="button" class="btn ghost" id="subtaskAddBtn">Add</button>
             </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="projectInput">Project <span class="hint">optional</span></label>
+          <div class="project-field-row">
+            <select id="projectInput">
+              <option value="">No project</option>
+            </select>
+            <button type="button" class="btn ghost" id="projectAddInlineBtn">+ New</button>
+          </div>
+          <div class="subtask-add-row" id="projectNewRow" style="display:none;">
+            <input type="text" id="newProjectInlineInput" maxlength="60" placeholder="New project name…">
+            <button type="button" class="btn ghost" id="projectNewConfirmBtn">Add</button>
           </div>
         </div>
         <div class="row2">
@@ -279,13 +300,34 @@
       <div class="profile-divider">or create a new profile</div>
       <div class="field">
         <label for="newUsernameInput">Username</label>
-        <input type="text" id="newUsernameInput" maxlength="40" placeholder="e.g. Rakesh" autocomplete="off">
+        <input type="text" id="newUsernameInput" maxlength="40" placeholder="e.g. Shandeep" autocomplete="off">
         <span class="hint">No password — just pick a name to keep your tasks separate from anyone else using this board.</span>
       </div>
     </div>
     <div class="modal-foot">
       <button type="button" class="btn ghost" id="profileCancelBtn" style="display:none;">Cancel</button>
       <button type="button" class="btn primary" id="profileContinueBtn">Create & continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Manage Projects ============ -->
+<div class="modal-overlay" id="projectsModalOverlay">
+  <div class="modal small" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2>Projects</h2>
+      <button class="icon-btn" id="projectsModalClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="project-list" id="projectManageList"></div>
+      <div class="field">
+        <label for="newProjectNameInput">New project name</label>
+        <div class="project-field-row">
+          <input type="text" id="newProjectNameInput" maxlength="60" placeholder="e.g. Project Phoenix" autocomplete="off">
+          <button type="button" class="btn primary" id="addProjectBtn">Add</button>
+        </div>
+        <span class="hint">Click a project's name below to rename it. Deleting a project just unassigns it from tasks — nothing gets deleted.</span>
+      </div>
     </div>
   </div>
 </div>
@@ -309,11 +351,11 @@
       <div class="row2">
         <div class="field">
           <label for="ghOwnerInput">Repo owner</label>
-          <input type="text" id="ghOwnerInput" placeholder="e.g. rakeshvadnala" autocomplete="off">
+          <input type="text" id="ghOwnerInput" placeholder="e.g. shandeepc" autocomplete="off">
         </div>
         <div class="field">
           <label for="ghRepoInput">Repository</label>
-          <input type="text" id="ghRepoInput" placeholder="e.g. todo" autocomplete="off">
+          <input type="text" id="ghRepoInput" placeholder="e.g. Momentum-Storage" autocomplete="off">
         </div>
       </div>
       <div class="row2">
@@ -323,7 +365,7 @@
         </div>
         <div class="field">
           <label for="ghPathInput">File path</label>
-          <input type="text" id="ghPathInput" placeholder="data/flow-board.json" autocomplete="off">
+          <input type="text" id="ghPathInput" placeholder="data/momentum-board.json" autocomplete="off">
         </div>
       </div>
       <div class="field">
@@ -349,7 +391,7 @@
   </div>
 </div>
 
-<script src="./js/custom-ui.js"></script>
-<script src="./js/script.js"></script>
+<script src="./custom-ui.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>
