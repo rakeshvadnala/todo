@@ -199,7 +199,7 @@
       "projects": [
         {
           "id": "tmrstqqfdsvsp71g",
-          "name": "My Project",
+          "name": "SIB",
           "tasks": []
         },
         {
@@ -254,6 +254,7 @@
         "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
+        "projectFilter": "all",
         "userName": "Rakesh"
       }
     },
