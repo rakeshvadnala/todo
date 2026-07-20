@@ -251,12 +251,10 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_desc",
+        "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
-        "projectFilter": "all",
-        "userName": "Rakesh",
-        "selectedProjectId": "tmrstr0zcei7ouzx"
+        "userName": "Rakesh"
       }
     },
     "rajan": {
