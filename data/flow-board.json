@@ -12,6 +12,11 @@
           "id": "tmrstr0zcei7ouzx",
           "name": "EGA",
           "tasks": []
+        },
+        {
+          "id": "tmrstr6b92dqtwig",
+          "name": "DOHA",
+          "tasks": []
         }
       ],
       "settings": {
@@ -20,7 +25,7 @@
         "priorityFilter": "all",
         "statusFilter": "all",
         "userName": "Rakesh",
-        "selectedProjectId": "tmrstqqfdsvsp71g"
+        "selectedProjectId": "tmrstr6b92dqtwig"
       }
     },
     "rajan": {
