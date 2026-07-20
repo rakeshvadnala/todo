@@ -4,6 +4,22 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmrswevu4pv7becw",
+          "title": "Database - Test lastlogin via query in saviynt",
+          "description": "Database - Test lastlogin via query in saviynt",
+          "priority": "medium",
+          "dueDate": "2026-07-20",
+          "status": "daily",
+          "archived": false,
+          "order": 1784532228268,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-20T07:23:48.268Z",
+          "updatedAt": "2026-07-20T07:23:48.268Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmrswdzgob40q2b0",
           "title": "Test Cases Prepation",
           "description": "1. Microsoft Exchange Online - Individual Mailbox (App 10)\n2. eDiscovery Portal (App 11)",
