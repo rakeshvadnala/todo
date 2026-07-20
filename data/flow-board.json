@@ -147,15 +147,15 @@
           "description": "work on the form for creation",
           "priority": "medium",
           "dueDate": "2026-07-10",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1783584332316.5,
+          "order": 1783592762270.5,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:59:45.430Z",
-          "updatedAt": "2026-07-20T06:16:41.716Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-20T08:56:24.984Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-20T08:56:24.984Z"
         },
         {
           "id": "tmrbsdx3qty6kguh",
