@@ -116,9 +116,9 @@
           "description": "eDiscovery Demo Monday",
           "priority": "medium",
           "dueDate": "2026-07-13",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -1.75,
+          "order": 1783592762271,
           "subtasks": [
             {
               "id": "tmrje0p025zm63sy",
@@ -132,9 +132,9 @@
             }
           ],
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-20T05:21:30.376Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-20T05:21:35.538Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-20T05:21:35.538Z"
         },
         {
           "id": "tmrbsdfcsmuj2t3w",
