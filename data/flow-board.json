@@ -144,7 +144,7 @@
         {
           "id": "tmrbsewbax6u7d6y",
           "title": "SQL Application with Creation options",
-          "description": "work on the form for creation",
+          "description": "work on the form for creation - Not in scoping. closing it",
           "priority": "medium",
           "dueDate": "2026-07-10",
           "status": "completed",
@@ -153,7 +153,7 @@
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:59:45.430Z",
-          "updatedAt": "2026-07-20T08:56:24.984Z",
+          "updatedAt": "2026-07-20T08:56:47.858Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T08:56:24.984Z"
         },
