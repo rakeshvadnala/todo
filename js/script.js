@@ -27,11 +27,13 @@ function loadMaster(){
 function defaultUserData(){
   return {
     tasks: [],
+    projects: [],
     settings: {
       theme: (typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark",
       sort: "manual",
       priorityFilter: "all",
-      statusFilter: "all"
+      statusFilter: "all",
+      projectFilter: "all"
     }
   };
 }
@@ -53,6 +55,7 @@ let masterState = loadMaster() || { users: {} };
     masterState.users[key] = {
       displayName,
       tasks: legacy.tasks,
+      projects: [],
       settings: Object.assign(defaultUserData().settings, legacy.settings || {})
     };
     localStorage.setItem(MASTER_KEY, JSON.stringify(masterState));
@@ -70,6 +73,7 @@ function saveState(){
   if(!currentUserKey || !state) return;
   masterState.users[currentUserKey].tasks = state.tasks;
   masterState.users[currentUserKey].settings = state.settings;
+  masterState.users[currentUserKey].projects = state.projects || [];
   // Debounced auto-save; still effectively instant.
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
@@ -188,7 +192,7 @@ function selectProfile(key){
   if(!u) return;
   currentUserKey = key;
   currentDisplayName = u.displayName || key;
-  state = { tasks: u.tasks || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
+  state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
   finishProfileSelection();
 }
 
@@ -339,9 +343,16 @@ function mergeMasterStates(local, remote){
         taskMap.set(t.id, t);
       }
     });
+    // projects: union by id — a project added on either side survives, and on
+    // a name collision for the same id we keep whichever side is "local" here
+    // (mergeMasterStates is called with the actively-syncing browser as local).
+    const projectMap = new Map();
+    (r.projects || []).forEach(p => projectMap.set(p.id, p));
+    (l.projects || []).forEach(p => projectMap.set(p.id, p));
     merged.users[key] = {
       displayName: l.displayName || r.displayName,
       tasks: [...taskMap.values()],
+      projects: [...projectMap.values()],
       settings: l.settings || r.settings // prefer whichever browser is actively merging for UI prefs
     };
   });
@@ -378,7 +389,7 @@ async function pullFromGitHub(opts){
     // Refresh whatever's currently on screen with the merged data
     if(currentUserKey && masterState.users[currentUserKey]){
       const u = masterState.users[currentUserKey];
-      state = { tasks: u.tasks || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
+      state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
       renderBoard();
     }
     if(document.getElementById("profileModalOverlay").classList.contains("open")){
@@ -514,6 +525,152 @@ document.getElementById("ghDisconnectBtn").addEventListener("click", ()=>{
 });
 
 /* ============================================================
+   PROJECTS — free-form, per-profile grouping for tasks
+   ============================================================ */
+function ensureProjectsArray(){
+  if(!Array.isArray(state.projects)) state.projects = [];
+}
+
+function projectColor(id){
+  let hash = 0;
+  for(let i=0; i<id.length; i++){ hash = id.charCodeAt(i) + ((hash << 5) - hash); }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue} 62% 48%)`;
+}
+
+function findProject(id){
+  if(!id) return null;
+  return (state.projects || []).find(p => p.id === id) || null;
+}
+
+function sortedProjects(){
+  return (state.projects || []).slice().sort((a,b)=> a.name.localeCompare(b.name));
+}
+
+function addProject(name){
+  const trimmed = (name || "").trim();
+  if(!trimmed) return null;
+  ensureProjectsArray();
+  const existing = state.projects.find(p => p.name.toLowerCase() === trimmed.toLowerCase());
+  if(existing) return existing;
+  const proj = { id: uid(), name: trimmed.slice(0,60) };
+  state.projects.push(proj);
+  saveState();
+  return proj;
+}
+
+function renameProject(id, newName){
+  const p = findProject(id);
+  if(!p) return;
+  const trimmed = (newName || "").trim();
+  if(!trimmed || trimmed === p.name) return;
+  p.name = trimmed.slice(0,60);
+  saveState();
+  renderBoard();
+  renderProjectFilterSelect();
+}
+
+function deleteProject(id){
+  const p = findProject(id);
+  if(!p) return;
+  const affectedIds = state.tasks.filter(t => t.projectId === id).map(t => t.id);
+  state.projects = state.projects.filter(pr => pr.id !== id);
+  state.tasks.forEach(t => { if(t.projectId === id) t.projectId = null; });
+  if(state.settings.projectFilter === id) state.settings.projectFilter = "all";
+  saveState();
+  renderBoard();
+  renderProjectFilterSelect();
+  renderManageProjectsList();
+  showToast(`Deleted project "${p.name}"`, "success", "Undo", ()=>{
+    state.projects.push(p);
+    state.tasks.forEach(t => { if(affectedIds.includes(t.id)) t.projectId = id; });
+    saveState();
+    renderBoard();
+    renderProjectFilterSelect();
+    renderManageProjectsList();
+  });
+}
+
+// Rebuilds a <select>'s <option> list from the current project list, keeping
+// `selectedId` selected if it still exists. Also nudges the custom-dropdown
+// UI (see custom-ui.js) since programmatic option changes don't fire 'change'.
+function renderProjectSelectOptions(selectEl, selectedId){
+  const projects = sortedProjects();
+  selectEl.innerHTML = `<option value="">No project</option>` +
+    projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
+  selectEl.value = (selectedId && projects.some(p => p.id === selectedId)) ? selectedId : "";
+  const inst = window.customSelectRegistry && window.customSelectRegistry[selectEl.id];
+  if(inst) inst.refresh();
+}
+
+function renderProjectFilterSelect(){
+  const sel = document.getElementById("projectFilterSelect");
+  if(!sel) return;
+  const projects = sortedProjects();
+  const current = state.settings.projectFilter || "all";
+  sel.innerHTML = `<option value="all">All projects</option><option value="none">No project</option>` +
+    projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
+  sel.value = (current === "all" || current === "none" || projects.some(p => p.id === current)) ? current : "all";
+  const inst = window.customSelectRegistry && window.customSelectRegistry["projectFilterSelect"];
+  if(inst) inst.refresh();
+}
+
+function renderManageProjectsList(){
+  const list = document.getElementById("projectManageList");
+  const projects = sortedProjects();
+  if(projects.length === 0){
+    list.innerHTML = `<div class="project-empty">No projects yet — add one below.</div>`;
+    return;
+  }
+  list.innerHTML = projects.map(p=>{
+    const count = state.tasks.filter(t => !t.archived && t.projectId === p.id).length;
+    return `<div class="project-row" data-id="${escapeHtml(p.id)}">
+      <span class="project-dot" style="--proj-color:${projectColor(p.id)}"></span>
+      <input type="text" class="project-row-name" value="${escapeHtml(p.name)}" maxlength="60">
+      <span class="project-row-meta">${count} task${count===1?"":"s"}</span>
+      <button type="button" class="project-row-delete" title="Delete project">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll(".project-row-name").forEach(input=>{
+    const commit = ()=> renameProject(input.closest(".project-row").dataset.id, input.value);
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter"){ e.preventDefault(); input.blur(); }
+    });
+  });
+  list.querySelectorAll(".project-row-delete").forEach(btn=>{
+    btn.addEventListener("click", ()=> deleteProject(btn.closest(".project-row").dataset.id));
+  });
+}
+
+function openManageProjectsModal(){
+  renderManageProjectsList();
+  document.getElementById("newProjectNameInput").value = "";
+  openOverlay("projectsModalOverlay");
+}
+
+document.getElementById("manageProjectsBtn").addEventListener("click", openManageProjectsModal);
+document.getElementById("projectsModalClose").addEventListener("click", ()=>closeOverlay("projectsModalOverlay"));
+document.getElementById("addProjectBtn").addEventListener("click", ()=>{
+  const input = document.getElementById("newProjectNameInput");
+  const proj = addProject(input.value);
+  if(proj){
+    input.value = "";
+    renderManageProjectsList();
+    renderProjectFilterSelect();
+  }
+});
+document.getElementById("newProjectNameInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("addProjectBtn").click();
+  }
+});
+
+/* ============================================================
    RENDER: BOARD
    ============================================================ */
 const COLUMNS = [
@@ -529,9 +686,12 @@ const resultCountEl = document.getElementById("resultCount");
 function getVisibleTasks(){
   const q = searchInput.value.trim().toLowerCase();
   const pf = state.settings.priorityFilter;
+  const prf = state.settings.projectFilter || "all";
   return state.tasks.filter(t=>{
     if(t.archived) return false;
     if(pf !== "all" && t.priority !== pf) return false;
+    if(prf === "none" && t.projectId) return false;
+    if(prf !== "all" && prf !== "none" && t.projectId !== prf) return false;
     if(q){
       const hay = (t.title + " " + (t.description||"")).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -598,12 +758,14 @@ function subtaskPanelHTML(t){
 function cardHTML(t){
   const due = dueMeta(t.dueDate);
   const isDone = t.status === "completed";
+  const proj = t.projectId ? findProject(t.projectId) : null;
   return `
   <div class="card priority-${t.priority}${isDone ? " done" : ""}" data-id="${t.id}" tabindex="0" role="group" aria-label="${escapeHtml(t.title)}">
     <div class="card-top">
       <div class="card-title">${escapeHtml(t.title)}</div>
       <span class="pri-chip priority-${t.priority}">${t.priority}</span>
     </div>
+    ${proj ? `<div class="project-chip" style="--proj-color:${projectColor(proj.id)}">${escapeHtml(proj.name)}</div>` : ""}
     ${t.description ? `<div class="card-desc">${escapeHtml(t.description)}</div>` : ""}
     <div class="card-meta">
       ${due ? `<span class="meta-item due-chip ${due.cls}">${escapeHtml(due.label)}</span>` : ""}
@@ -1097,6 +1259,9 @@ function openTaskModal(id, presetStatus){
   currentSubtasks = t && Array.isArray(t.subtasks) ? t.subtasks.map(s => ({ ...s })) : [];
   renderSubtaskEditor();
 
+  renderProjectSelectOptions(document.getElementById("projectInput"), t ? t.projectId : null);
+  document.getElementById("projectNewRow").style.display = "none";
+
   if(t){
     metaReadout.style.display = "flex";
     metaReadout.innerHTML = `
@@ -1116,6 +1281,7 @@ taskForm.addEventListener("submit", (e)=>{
   e.preventDefault();
   const title = titleInput.value.trim();
   if(!title) return;
+  const projectId = document.getElementById("projectInput").value || null;
 
   if(editingId){
     const t = findTask(editingId);
@@ -1124,6 +1290,7 @@ taskForm.addEventListener("submit", (e)=>{
     t.priority = currentPriority;
     t.dueDate = dueInput.value || null;
     t.subtasks = currentSubtasks;
+    t.projectId = projectId;
     const newStatus = statusInput.value;
     if(newStatus !== t.status){
       moveTaskToStatus(t.id, newStatus); // handles completedBy/On + toast
@@ -1143,6 +1310,7 @@ taskForm.addEventListener("submit", (e)=>{
       archived: false,
       order: Date.now(),
       subtasks: currentSubtasks,
+      projectId: projectId,
       createdAt: nowISO(),
       updatedAt: nowISO(),
       completedBy: null,
@@ -1163,6 +1331,33 @@ taskForm.addEventListener("submit", (e)=>{
 document.getElementById("taskCancelBtn").addEventListener("click", ()=>closeOverlay("taskModalOverlay"));
 document.getElementById("taskModalClose").addEventListener("click", ()=>closeOverlay("taskModalOverlay"));
 document.getElementById("newTaskBtn").addEventListener("click", ()=>openTaskModal(null));
+
+document.getElementById("projectAddInlineBtn").addEventListener("click", ()=>{
+  const row = document.getElementById("projectNewRow");
+  const showing = row.style.display !== "none";
+  row.style.display = showing ? "none" : "flex";
+  if(!showing){
+    const input = document.getElementById("newProjectInlineInput");
+    input.value = "";
+    input.focus();
+  }
+});
+function confirmNewProjectInline(){
+  const input = document.getElementById("newProjectInlineInput");
+  const proj = addProject(input.value);
+  if(!proj) return;
+  input.value = "";
+  document.getElementById("projectNewRow").style.display = "none";
+  renderProjectSelectOptions(document.getElementById("projectInput"), proj.id);
+  renderProjectFilterSelect();
+}
+document.getElementById("projectNewConfirmBtn").addEventListener("click", confirmNewProjectInline);
+document.getElementById("newProjectInlineInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    e.preventDefault(); // don't let Enter inside this field submit the whole task form
+    confirmNewProjectInline();
+  }
+});
 
 /* ============================================================
    OVERLAYS (generic open/close + ESC + backdrop click)
@@ -1227,8 +1422,9 @@ function exportData(){
   const payload = {
     exportedAt: nowISO(),
     app: "Flow local to-do board",
-    version: 1,
-    tasks: state.tasks
+    version: 2,
+    tasks: state.tasks,
+    projects: state.projects || []
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
   const url = URL.createObjectURL(blob);
@@ -1254,6 +1450,17 @@ importFileInput.addEventListener("change", (e)=>{
       const data = JSON.parse(evt.target.result);
       const incoming = Array.isArray(data) ? data : data.tasks;
       if(!Array.isArray(incoming)) throw new Error("No tasks array found");
+
+      // Bring in any projects referenced by the import too, matching existing
+      // ones by name (case-insensitive) so re-importing doesn't create duplicates.
+      const incomingProjects = Array.isArray(data.projects) ? data.projects : [];
+      const projectIdMap = {}; // id in the imported file -> id in this profile
+      incomingProjects.forEach(rp=>{
+        if(!rp || !rp.name) return;
+        const proj = addProject(rp.name);
+        if(rp.id && proj) projectIdMap[rp.id] = proj.id;
+      });
+
       let added = 0, skipped = 0;
       const existingIds = new Set(state.tasks.map(t=>t.id));
       const importBase = Date.now();
@@ -1274,6 +1481,7 @@ importFileInput.addEventListener("change", (e)=>{
                 .filter(s => s && s.text)
                 .map(s => ({ id: s.id || uid(), text: String(s.text).slice(0,200), done: !!s.done }))
             : [],
+          projectId: raw.projectId && projectIdMap[raw.projectId] ? projectIdMap[raw.projectId] : null,
           createdAt: raw.createdAt || nowISO(),
           updatedAt: raw.updatedAt || nowISO(),
           completedBy: raw.completedBy || null,
@@ -1285,6 +1493,7 @@ importFileInput.addEventListener("change", (e)=>{
       });
       saveState();
       renderBoard();
+      renderProjectFilterSelect();
       showToast(`Imported ${added} task${added===1?"":"s"}${skipped?`, skipped ${skipped}`:""}`, "success");
     }catch(err){
       console.error(err);
@@ -1327,6 +1536,12 @@ document.getElementById("sortSelect").addEventListener("change", (e)=>{
 
 document.getElementById("statusFilterSelect").addEventListener("change", (e)=>{
   state.settings.statusFilter = e.target.value;
+  saveState();
+  renderBoard();
+});
+
+document.getElementById("projectFilterSelect").addEventListener("change", (e)=>{
+  state.settings.projectFilter = e.target.value;
   saveState();
   renderBoard();
 });
@@ -1401,8 +1616,16 @@ function seedIfEmpty(){
 function syncToolbarToSettings(){
   document.getElementById("sortSelect").value = state.settings.sort;
   document.getElementById("statusFilterSelect").value = state.settings.statusFilter;
+  renderProjectFilterSelect();
   document.querySelectorAll("#priorityFilterSeg button").forEach(b=>{
     b.classList.toggle("active", b.dataset.val === state.settings.priorityFilter);
+  });
+  // These two values were just set programmatically above, which doesn't fire
+  // a native 'change' event — nudge the custom dropdown UI so its visible
+  // trigger text matches (otherwise it can show the previous profile's choice).
+  ["sortSelect", "statusFilterSelect"].forEach(id=>{
+    const inst = window.customSelectRegistry && window.customSelectRegistry[id];
+    if(inst) inst.refresh();
   });
 }
 
@@ -1428,7 +1651,7 @@ function init(){
           masterState = fresh;
           if(currentUserKey && masterState.users[currentUserKey]){
             const u = masterState.users[currentUserKey];
-            state = { tasks: u.tasks || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
+            state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
             applyTheme();
             renderBoard();
           }
