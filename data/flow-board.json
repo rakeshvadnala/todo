@@ -2,6 +2,7 @@
   "users": {
     "rakesh": {
       "displayName": "Rakesh",
+      "tasks": [],
       "projects": [
         {
           "id": "tmrstqqfdsvsp71g",
@@ -49,6 +50,10 @@
               "completedOn": null
             }
           ]
+        },
+        {
+          "id": "tmrstyb5h80jwkd3",
+          "name": "Airtel"
         }
       ],
       "settings": {
@@ -56,12 +61,14 @@
         "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
+        "projectFilter": "all",
         "userName": "Rakesh",
         "selectedProjectId": "tmrstr0zcei7ouzx"
       }
     },
     "rajan": {
       "displayName": "Rajan",
+      "tasks": [],
       "projects": [],
       "settings": {
         "theme": "light",
@@ -72,6 +79,7 @@
     },
     "saurabh": {
       "displayName": "Saurabh",
+      "tasks": [],
       "projects": [],
       "settings": {
         "theme": "light",
