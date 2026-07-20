@@ -1,3 +1,5 @@
+window.customSelectRegistry = window.customSelectRegistry || {};
+
 class CustomSelect {
   constructor(selectElement) {
     this.select = selectElement;
@@ -17,6 +19,10 @@ class CustomSelect {
     
     this.buildOptions();
     this.updateTrigger();
+
+    if(this.select.id){
+      window.customSelectRegistry[this.select.id] = this;
+    }
     
     this.trigger.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -37,6 +43,15 @@ class CustomSelect {
       this.updateTrigger();
       this.buildOptions(); 
     });
+  }
+
+  // Call this after the underlying <select>'s options (or value) were
+  // rebuilt programmatically — e.g. the project dropdown gets new options
+  // whenever a project is added/renamed/deleted. Programmatic changes don't
+  // fire a native 'change' event, so the custom UI needs an explicit nudge.
+  refresh() {
+    this.updateTrigger();
+    this.buildOptions();
   }
 
   buildOptions() {
@@ -220,7 +235,7 @@ class CustomDatePicker {
 
 // Initialize custom components
 document.addEventListener('DOMContentLoaded', () => {
-  const selects = ['statusFilterSelect', 'sortSelect', 'statusInput'];
+  const selects = ['statusFilterSelect', 'sortSelect', 'statusInput', 'projectFilterSelect', 'projectInput'];
   selects.forEach(id => {
     const el = document.getElementById(id);
     if(el) new CustomSelect(el);
