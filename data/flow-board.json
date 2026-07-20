@@ -39,6 +39,7 @@
               "done": false
             }
           ],
+          "projectId": null,
           "createdAt": "2026-07-09T05:38:37.354Z",
           "updatedAt": "2026-07-14T10:41:44.542Z",
           "completedBy": null,
@@ -54,6 +55,7 @@
           "archived": false,
           "order": 1783592364927,
           "subtasks": [],
+          "projectId": null,
           "createdAt": "2026-07-09T05:33:56.521Z",
           "updatedAt": "2026-07-09T05:33:56.521Z",
           "completedBy": null,
@@ -90,6 +92,7 @@
               "done": false
             }
           ],
+          "projectId": null,
           "createdAt": "2026-07-09T05:29:16.146Z",
           "updatedAt": "2026-07-14T10:18:08.679Z",
           "completedBy": null,
@@ -105,6 +108,7 @@
           "archived": false,
           "order": 1783584332316.5,
           "subtasks": [],
+          "projectId": null,
           "createdAt": "2026-07-08T07:59:45.430Z",
           "updatedAt": "2026-07-09T11:19:23.790Z",
           "completedBy": null,
@@ -131,6 +135,7 @@
               "done": false
             }
           ],
+          "projectId": null,
           "createdAt": "2026-07-08T07:58:59.798Z",
           "updatedAt": "2026-07-20T05:21:35.538Z",
           "completedBy": "Rakesh",
@@ -152,6 +157,7 @@
               "done": false
             }
           ],
+          "projectId": null,
           "createdAt": "2026-07-08T07:58:36.796Z",
           "updatedAt": "2026-07-14T10:29:35.240Z",
           "completedBy": null,
@@ -167,6 +173,7 @@
           "archived": false,
           "order": 1783592762270,
           "subtasks": [],
+          "projectId": null,
           "createdAt": "2026-07-09T10:25:47.337Z",
           "updatedAt": "2026-07-13T15:40:46.498Z",
           "completedBy": "Rakesh",
@@ -182,18 +189,74 @@
           "archived": false,
           "order": 1783679483827,
           "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-07-10T10:31:23.827Z",
+          "updatedAt": "2026-07-20T06:16:24.629Z",
           "completedBy": null,
           "completedOn": null
         }
       ],
+      "projects": [
+        {
+          "id": "tmrstqqfdsvsp71g",
+          "name": "My Project",
+          "tasks": []
+        },
+        {
+          "id": "tmrstr0zcei7ouzx",
+          "name": "EGA",
+          "tasks": [
+            {
+              "id": "tmrstrlfj13fgetf",
+              "title": "Test1",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527782463,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:42.463Z",
+              "updatedAt": "2026-07-20T06:09:42.463Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstr6b92dqtwig",
+          "name": "DOHA",
+          "tasks": [
+            {
+              "id": "tmrstrrl52uqdqmr",
+              "title": "test23",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527790441,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:50.441Z",
+              "updatedAt": "2026-07-20T06:09:50.441Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstyb5h80jwkd3",
+          "name": "Airtel"
+        }
+      ],
       "settings": {
         "theme": "light",
-        "sort": "manual",
+        "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
-        "userName": "Rakesh"
+        "projectFilter": "all",
+        "userName": "Rakesh",
+        "selectedProjectId": "tmrstr0zcei7ouzx"
       }
     },
     "rajan": {
@@ -228,6 +291,7 @@
           "completedOn": "2026-07-09T10:25:33.319Z"
         }
       ],
+      "projects": [],
       "settings": {
         "theme": "light",
         "sort": "manual",
@@ -312,6 +376,7 @@
           "completedOn": "2026-07-11T07:50:57.852Z"
         }
       ],
+      "projects": [],
       "settings": {
         "theme": "light",
         "sort": "manual",
