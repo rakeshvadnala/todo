@@ -9,9 +9,9 @@
           "description": "Intune Dashboards in PROD",
           "priority": "high",
           "dueDate": "2026-07-22",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -3.75,
+          "order": 1783592762269,
           "subtasks": [
             {
               "id": "tmrvneqtj0j10p7a",
@@ -31,9 +31,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:29.483Z",
-          "updatedAt": "2026-07-22T05:35:24.573Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-22T08:12:11.149Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-22T08:12:11.149Z"
         },
         {
           "id": "tmrvn9r05r41l7vx",
@@ -41,13 +41,13 @@
           "description": "",
           "priority": "medium",
           "dueDate": "2026-07-24",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1784698270709,
+          "order": -3.5,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:10.709Z",
-          "updatedAt": "2026-07-22T05:31:10.709Z",
+          "updatedAt": "2026-07-22T08:12:08.610Z",
           "completedBy": null,
           "completedOn": null
         },
