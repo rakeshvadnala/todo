@@ -12,10 +12,26 @@
           "status": "inprogress",
           "archived": false,
           "order": -0.25,
-          "subtasks": [],
+          "subtasks": [
+            {
+              "id": "tmrvneqtj0j10p7a",
+              "text": "EGA Intune - Admin vs Normal Accounts",
+              "done": false
+            },
+            {
+              "id": "tmrvnexteretr81c",
+              "text": "EGA Identity Landscape - Intune (Privileged and Normal Accounts)",
+              "done": false
+            },
+            {
+              "id": "tmrvnf1d3awmq38b",
+              "text": "EGA Identity Landscape - Intune (Active & Inactive Accounts)",
+              "done": false
+            }
+          ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:29.483Z",
-          "updatedAt": "2026-07-22T05:31:33.255Z",
+          "updatedAt": "2026-07-22T05:35:18.433Z",
           "completedBy": null,
           "completedOn": null
         },
