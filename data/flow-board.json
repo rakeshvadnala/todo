@@ -64,12 +64,12 @@
             {
               "id": "tmru7xu2y0qzsok9",
               "text": "1. DevBox Application",
-              "done": false
+              "done": true
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-21T05:34:25.492Z",
-          "updatedAt": "2026-07-22T10:55:36.568Z",
+          "updatedAt": "2026-07-22T11:04:25.617Z",
           "completedBy": null,
           "completedOn": null
         },
