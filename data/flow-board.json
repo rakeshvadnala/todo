@@ -81,11 +81,11 @@
           "dueDate": "2026-07-22",
           "status": "inprogress",
           "archived": false,
-          "order": 0.25,
+          "order": -3.25,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-22T05:01:14.461Z",
+          "updatedAt": "2026-07-22T05:35:27.757Z",
           "completedBy": null,
           "completedOn": null
         },
