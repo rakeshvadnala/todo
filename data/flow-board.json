@@ -43,11 +43,11 @@
           "dueDate": "2026-07-24",
           "status": "inprogress",
           "archived": false,
-          "order": -3.5,
+          "order": -3.875,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:10.709Z",
-          "updatedAt": "2026-07-22T08:12:08.610Z",
+          "updatedAt": "2026-07-22T10:55:39.148Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -57,9 +57,9 @@
           "description": "Onboard the DevBox Application",
           "priority": "medium",
           "dueDate": "2026-07-23",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1784612065492,
+          "order": -4.5,
           "subtasks": [
             {
               "id": "tmru7xu2y0qzsok9",
@@ -69,7 +69,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-21T05:34:25.492Z",
-          "updatedAt": "2026-07-21T05:34:25.492Z",
+          "updatedAt": "2026-07-22T10:55:36.568Z",
           "completedBy": null,
           "completedOn": null
         },
