@@ -11,7 +11,7 @@
           "dueDate": "2026-07-22",
           "status": "inprogress",
           "archived": false,
-          "order": -0.25,
+          "order": -3.75,
           "subtasks": [
             {
               "id": "tmrvneqtj0j10p7a",
@@ -31,7 +31,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:29.483Z",
-          "updatedAt": "2026-07-22T05:35:18.433Z",
+          "updatedAt": "2026-07-22T05:35:24.573Z",
           "completedBy": null,
           "completedOn": null
         },
