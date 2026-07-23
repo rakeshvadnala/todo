@@ -380,7 +380,7 @@
         }
       ],
       "settings": {
-        "theme": "dark",
+        "theme": "light",
         "sort": "created_asc",
         "priorityFilter": "all",
         "statusFilter": "all",
