@@ -95,9 +95,9 @@
           "description": "Database - Test logintime via query in saviynt",
           "priority": "high",
           "dueDate": "2026-07-23",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -3.75,
+          "order": 1783592762269.5,
           "subtasks": [
             {
               "id": "tmrx6op5o95fwyvd",
@@ -114,9 +114,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-23T12:38:50.588Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-23T12:38:57.258Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-23T12:38:57.258Z"
         },
         {
           "id": "tmrswdzgob40q2b0",
