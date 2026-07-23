@@ -369,7 +369,7 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "manual",
+        "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
