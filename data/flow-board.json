@@ -197,12 +197,12 @@
             {
               "id": "tmrd2ofp0ghglgzu",
               "text": "2. Azure DevOps",
-              "done": false
+              "done": true
             },
             {
               "id": "tmrd2ojqh1njuf8d",
               "text": "3. SAP DSP",
-              "done": false
+              "done": true
             },
             {
               "id": "tmrd2om620sfludv",
@@ -212,7 +212,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-20T06:16:37.497Z",
+          "updatedAt": "2026-07-23T05:14:14.820Z",
           "completedBy": null,
           "completedOn": null
         },
