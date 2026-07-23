@@ -321,11 +321,11 @@
           "dueDate": "2026-07-20",
           "status": "daily",
           "archived": false,
-          "order": 1783679483827,
+          "order": 1783592364926,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-07-20T06:16:24.629Z",
+          "updatedAt": "2026-07-23T06:46:17.733Z",
           "completedBy": null,
           "completedOn": null
         }
