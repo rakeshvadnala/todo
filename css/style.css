@@ -456,6 +456,39 @@ select.select:focus{ outline:none; border-color:var(--accent-1); }
 .card-actions button.danger:hover{ color:var(--high); border-color:var(--high); background:var(--high-bg); }
 .card-actions svg{ width:13px; height:13px; }
 
+/* ============ Bulk select & actions ============ */
+.btn.ghost.active{ background:var(--accent-grad); color:#fff; border-color:transparent; }
+body.select-mode .card{ cursor:pointer; }
+
+.card-select-check{
+  position:absolute; top:10px; right:10px; z-index:2;
+  display:flex; align-items:center; justify-content:center;
+  width:20px; height:20px; cursor:pointer;
+}
+.card-select-check input[type=checkbox]{
+  width:17px; height:17px; accent-color:var(--accent-1); cursor:pointer;
+}
+
+.bulk-action-bar{
+  position:fixed; left:50%; bottom:-90px; transform:translateX(-50%);
+  z-index:150; display:flex; align-items:center; gap:16px;
+  background:var(--bg-1); border:1px solid var(--border);
+  border-radius:16px; padding:10px 14px 10px 18px;
+  box-shadow:var(--shadow);
+  transition:bottom var(--dur-med) var(--ease);
+}
+.bulk-action-bar.open{ bottom:20px; }
+.bulk-count{ font-size:13px; font-weight:700; color:var(--text-0); white-space:nowrap; font-family:var(--font-mono); }
+.bulk-actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.bulk-actions select.select{ padding:7px 26px 7px 10px; font-size:12.5px; }
+.bulk-actions .btn{ padding:7px 12px; font-size:12.5px; }
+
+@media (max-width:640px){
+  .bulk-action-bar{ left:12px; right:12px; transform:none; flex-direction:column; align-items:stretch; gap:8px; bottom:-160px; }
+  .bulk-action-bar.open{ bottom:12px; }
+  .bulk-actions{ justify-content:center; }
+}
+
 /* ============ Modal ============ */
 .modal-overlay{
   position:fixed; inset:0; z-index:100;
@@ -568,8 +601,10 @@ select.select:focus{ outline:none; border-color:var(--accent-1); }
   animation: card-in var(--dur-fast) var(--ease);
 }
 .subtask-row input[type=checkbox]{ accent-color:var(--accent-1); cursor:pointer; flex:none; width:14px; height:14px; }
-.subtask-row-text{ flex:1; font-size:12.5px; word-break:break-word; line-height:1.4; }
+.subtask-row-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.subtask-row-text{ font-size:12.5px; word-break:break-word; line-height:1.4; }
 .subtask-row-text.done{ text-decoration:line-through; color:var(--text-2); }
+.subtask-row-meta{ font-size:10px; color:var(--text-2); font-family:var(--font-mono); }
 .subtask-row-remove{
   background:none; border:none; color:var(--text-2); cursor:pointer;
   display:flex; padding:3px; border-radius:6px; flex:none;
