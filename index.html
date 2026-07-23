@@ -109,6 +109,9 @@
     <button class="icon-btn" id="archiveBtn" title="Archive">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg>
     </button>
+    <button class="icon-btn" id="insightsBtn" title="Board Insights & Analytics">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+    </button>
     <button class="icon-btn" id="themeBtn" title="Toggle theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -271,6 +274,17 @@
       <button class="icon-btn" id="archiveModalClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body" id="archiveList" style="gap:10px;"></div>
+  </div>
+</div>
+
+<!-- ============ Board Insights & Analytics ============ -->
+<div class="modal-overlay" id="insightsModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:820px;">
+    <div class="modal-head">
+      <h2>Board Insights</h2>
+      <button class="icon-btn" id="insightsModalClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="insightsBody" style="gap:16px;"></div>
   </div>
 </div>
 

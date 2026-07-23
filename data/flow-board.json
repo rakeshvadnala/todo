@@ -9,15 +9,15 @@
           "description": "",
           "priority": "high",
           "dueDate": "2026-07-23",
-          "status": "completed",
+          "status": "inprogress",
           "archived": false,
-          "order": 1783592762270,
+          "order": -1.75,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-23T05:36:40.675Z",
-          "updatedAt": "2026-07-23T06:31:43.325Z",
-          "completedBy": "Rakesh",
-          "completedOn": "2026-07-23T06:31:43.325Z"
+          "updatedAt": "2026-07-23T05:36:47.014Z",
+          "completedBy": null,
+          "completedOn": null
         },
         {
           "id": "tmrvna5hn6l1d3cb",
@@ -97,11 +97,11 @@
           "dueDate": "2026-07-23",
           "status": "inprogress",
           "archived": false,
-          "order": -3.75,
+          "order": -3.25,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-23T06:46:13.676Z",
+          "updatedAt": "2026-07-22T11:01:13.131Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -203,7 +203,7 @@
           "dueDate": "2026-07-24",
           "status": "daily",
           "archived": false,
-          "order": 1783592364926,
+          "order": 1783584332315.5,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
@@ -228,7 +228,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-23T06:30:41.571Z",
+          "updatedAt": "2026-07-23T05:35:02.197Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -255,7 +255,7 @@
           "priority": "medium",
           "dueDate": "2026-07-13",
           "status": "completed",
-          "archived": true,
+          "archived": false,
           "order": 1783592762271,
           "subtasks": [
             {
@@ -271,7 +271,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-23T06:36:19.914Z",
+          "updatedAt": "2026-07-20T06:16:58.026Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T05:21:35.538Z"
         },
@@ -283,7 +283,7 @@
           "dueDate": "2026-07-29",
           "status": "inprogress",
           "archived": false,
-          "order": -1.75,
+          "order": -0.75,
           "subtasks": [
             {
               "id": "tmrvm6frfcnxhsg4",
@@ -293,7 +293,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-23T06:55:05.392Z",
+          "updatedAt": "2026-07-22T05:01:04.500Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -321,11 +321,11 @@
           "dueDate": "2026-07-20",
           "status": "daily",
           "archived": false,
-          "order": 1783592364926,
+          "order": 1783679483827,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-07-23T06:55:01.812Z",
+          "updatedAt": "2026-07-20T06:16:24.629Z",
           "completedBy": null,
           "completedOn": null
         }
@@ -385,52 +385,23 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_desc",
+        "sort": "created_asc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
-        "userName": "Rakesh",
-        "selectedProjectId": "tmrstr0zcei7ouzx"
+        "userName": "Rakesh"
       }
     },
     "rajan": {
       "displayName": "Rajan",
-      "tasks": [
-        {
-          "id": "tmrddf3uv5wwgs4p",
-          "title": "Example: in-progress work",
-          "description": "Tasks here show up in the middle column until they're done.",
-          "priority": "high",
-          "dueDate": "2026-07-11",
-          "status": "inprogress",
-          "archived": false,
-          "order": 1783593133319,
-          "createdAt": "2026-07-09T09:35:33.319Z",
-          "updatedAt": "2026-07-09T10:05:33.319Z",
-          "completedBy": null,
-          "completedOn": null
-        },
-        {
-          "id": "tmrddf3uvspl35lw",
-          "title": "Example: a finished task",
-          "description": "Completed tasks keep a permanent record of who finished them and when.",
-          "priority": "low",
-          "dueDate": null,
-          "status": "completed",
-          "archived": false,
-          "order": 1783593233319,
-          "createdAt": "2026-07-09T07:15:33.319Z",
-          "updatedAt": "2026-07-09T10:25:33.319Z",
-          "completedBy": "Flow",
-          "completedOn": "2026-07-09T10:25:33.319Z"
-        }
-      ],
+      "tasks": [],
       "projects": [],
       "settings": {
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     },
     "saurabh": {
