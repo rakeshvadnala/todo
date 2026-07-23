@@ -255,7 +255,7 @@
           "priority": "medium",
           "dueDate": "2026-07-13",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762271,
           "subtasks": [
             {
@@ -271,7 +271,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-20T06:16:58.026Z",
+          "updatedAt": "2026-07-23T06:36:19.914Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T05:21:35.538Z"
         },
