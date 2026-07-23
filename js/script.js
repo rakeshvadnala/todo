@@ -1039,7 +1039,9 @@ function onPointerDown(e){
     offsetX: e.clientX - rect.left,
     offsetY: e.clientY - rect.top,
     width: rect.width,
+    height: rect.height,
     ghost: null,
+    placeholder: null,
     started: false,
     fromList: card.closest(".tasklist")
   };
@@ -1048,14 +1050,37 @@ function onPointerDown(e){
 }
 
 function startDrag(){
-  const { card, width } = dragState;
-  card.classList.add("dragging");
+  const { card, width, height } = dragState;
+
+  // Ghost clone follows the cursor — this is the only thing that visually
+  // represents "the card being dragged". Clone BEFORE hiding the original
+  // so the clone doesn't inherit display:none, and explicitly turn off its
+  // entrance animation so it doesn't fade/pop in when first appended.
   const ghost = card.cloneNode(true);
   ghost.classList.add("drag-ghost");
+  ghost.classList.remove("dragging");
+  ghost.style.animation = "none";
   ghost.style.setProperty("--ghost-w", width + "px");
   ghost.querySelectorAll(".card-actions").forEach(a=>a.remove());
   document.body.appendChild(ghost);
   dragState.ghost = ghost;
+
+  // A lightweight placeholder takes the card's spot in the list and is what
+  // actually gets reordered as the pointer moves — NOT the real card. Moving
+  // the real, "heavy" card element via repeated insertBefore/appendChild
+  // (including across different columns) was re-triggering its CSS entrance
+  // animation on every reinsertion, which is what looked like "shaking".
+  // The placeholder has no such animation, so this is gone entirely.
+  const placeholder = document.createElement("div");
+  placeholder.className = "card-placeholder";
+  placeholder.style.height = height + "px";
+  card.parentElement.insertBefore(placeholder, card);
+  dragState.placeholder = placeholder;
+
+  // The real card just sits hidden in its original spot until drop, at
+  // which point the board re-renders from state anyway.
+  card.classList.add("dragging");
+
   dragState.started = true;
   document.body.style.userSelect = "none";
 }
@@ -1083,11 +1108,11 @@ function onPointerMove(e){
   if(col) col.classList.add("drop-hover");
   dragState.hoverColumn = col;
 
-  // reorder preview within target list
+  // reorder preview within target list — moves the placeholder, never the real card
   const list = elUnder && elUnder.closest(".tasklist");
   if(list){
     const after = getDragAfterElement(list, e.clientY);
-    const placeholder = dragState.card;
+    const placeholder = dragState.placeholder;
     if(after == null){
       if(list.lastElementChild !== placeholder) list.appendChild(placeholder);
     } else if(after !== placeholder){
@@ -1119,14 +1144,18 @@ function getDragAfterElement(container, y){
   }, { offset: -Infinity, element: null }).element;
 }
 
-function computeOrderFromDOM(list, cardEl){
-  // Places the card's new `order` value between its current DOM neighbors,
-  // so it lands exactly where the live drag preview left it.
-  if(!list) return Date.now();
-  const domCards = [...list.querySelectorAll(".card")];
-  const idx = domCards.indexOf(cardEl);
-  const prevEl = idx > 0 ? domCards[idx-1] : null;
-  const nextEl = idx >= 0 && idx < domCards.length - 1 ? domCards[idx+1] : null;
+function computeOrderFromDOM(list, referenceEl){
+  // Places the new `order` value between referenceEl's current DOM
+  // neighbors, so the task lands exactly where the placeholder was dropped.
+  // Skips the (hidden) real dragged card and any non-task elements (like an
+  // empty-column message) when looking for real neighbors.
+  if(!list || !referenceEl) return Date.now();
+
+  let prevEl = referenceEl.previousElementSibling;
+  while(prevEl && (prevEl.classList.contains("dragging") || !prevEl.dataset.id)) prevEl = prevEl.previousElementSibling;
+  let nextEl = referenceEl.nextElementSibling;
+  while(nextEl && (nextEl.classList.contains("dragging") || !nextEl.dataset.id)) nextEl = nextEl.nextElementSibling;
+
   const prevTask = prevEl ? findTask(prevEl.dataset.id) : null;
   const nextTask = nextEl ? findTask(nextEl.dataset.id) : null;
   const prevOrder = prevTask ? (prevTask.order ?? 0) : null;
@@ -1147,18 +1176,17 @@ function onPointerUp(e){
     document.querySelectorAll(".column").forEach(c=>c.classList.remove("drop-hover"));
     if(dragState.ghost) dragState.ghost.remove();
 
-    // The live preview already reparented dragState.card into whichever
-    // tasklist it was hovering over — read its final resting place directly
-    // rather than relying only on the last hover event (more robust if the
-    // pointer ends exactly on a column edge).
-    const finalList = dragState.card.parentElement && dragState.card.parentElement.classList.contains("tasklist")
-      ? dragState.card.parentElement
+    const finalList = dragState.placeholder && dragState.placeholder.parentElement
+      ? dragState.placeholder.parentElement
       : dragState.fromList;
     const finalColumn = finalList ? finalList.closest(".column") : null;
     const newStatus = finalColumn ? finalColumn.dataset.status : dragState.fromList.dataset.status;
-    const newOrder = computeOrderFromDOM(finalList, dragState.card);
+    const newOrder = computeOrderFromDOM(finalList, dragState.placeholder);
 
+    if(dragState.placeholder) dragState.placeholder.remove();
     dragState.card.classList.remove("dragging");
+    dragState.card.style.display = ""; // defensive; renderBoard() replaces this node anyway
+
     dropTaskAt(dragState.id, newStatus, newOrder);
   }
   dragState = null;
@@ -1413,6 +1441,339 @@ function renderArchiveModal(){
 }
 document.getElementById("archiveBtn").addEventListener("click", ()=>{ renderArchiveModal(); openOverlay("archiveModalOverlay"); });
 document.getElementById("archiveModalClose").addEventListener("click", ()=>closeOverlay("archiveModalOverlay"));
+
+/* ============================================================
+   BOARD INSIGHTS & ANALYTICS DASHBOARD
+   ============================================================ */
+let insightsCalMonth = new Date().getMonth(); // 0-11
+let insightsCalYear = new Date().getFullYear();
+
+function openInsightsModal(){
+  const now = new Date();
+  insightsCalMonth = now.getMonth();
+  insightsCalYear = now.getFullYear();
+  renderInsights();
+  openOverlay("insightsModalOverlay");
+}
+
+function renderInsights(){
+  const body = document.getElementById("insightsBody");
+  if(!body || !state || !state.tasks) return;
+
+  const all = state.tasks.filter(t => !t.archived);
+  const totalActive = all.length;
+  const completed = all.filter(t => t.status === "completed");
+  const inProgress = all.filter(t => t.status === "inprogress");
+  const daily = all.filter(t => t.status === "daily");
+
+  const completionRate = totalActive > 0 ? Math.round((completed.length / totalActive) * 100) : 0;
+
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const overdueCount = all.filter(t => {
+    if(t.status === "completed" || !t.dueDate) return false;
+    return new Date(t.dueDate + "T00:00:00") < todayDate;
+  }).length;
+
+  const days = [];
+  let maxDayCompleted = 1;
+  for(let i = 6; i >= 0; i--){
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().slice(0, 10);
+    const dayLabel = d.toLocaleDateString(undefined, { weekday: "short" });
+    const isToday = i === 0;
+
+    const count = completed.filter(t => {
+      const cDate = t.completedOn ? t.completedOn.slice(0, 10) : (t.updatedAt ? t.updatedAt.slice(0, 10) : "");
+      return cDate === dateStr;
+    }).length;
+
+    if(count > maxDayCompleted) maxDayCompleted = count;
+    days.push({ dayLabel, count, isToday });
+  }
+
+  const highCt = all.filter(t => t.priority === "high").length;
+  const medCt = all.filter(t => t.priority === "medium").length;
+  const lowCt = all.filter(t => t.priority === "low").length;
+
+  // Uses the real categorization feature this board has (Projects) rather
+  // than a separate tags system, since tasks aren't tagged — they're
+  // optionally assigned to a project.
+  const projectCounts = {};
+  all.forEach(t => {
+    if(t.projectId) projectCounts[t.projectId] = (projectCounts[t.projectId] || 0) + 1;
+  });
+  const topProjects = Object.entries(projectCounts)
+    .map(([id, count]) => ({ project: findProject(id), count }))
+    .filter(p => p.project)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+
+  body.innerHTML = `
+    <div class="insights-grid">
+      <div class="insights-kpis">
+        <div class="kpi-card">
+          <div class="kpi-val">${totalActive}</div>
+          <div class="kpi-label">Active Tasks</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val">${completed.length}</div>
+          <div class="kpi-label">Completed</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val">${completionRate}%</div>
+          <div class="kpi-label">Completion Rate</div>
+        </div>
+        <div class="kpi-card" ${overdueCount > 0 ? 'style="border-color:var(--high);"' : ''}>
+          <div class="kpi-val" ${overdueCount > 0 ? 'style="color:var(--high);"' : ''}>${overdueCount}</div>
+          <div class="kpi-label">Overdue Tasks</div>
+        </div>
+      </div>
+
+      <div class="insights-panel">
+        <h3>7-Day Completion Velocity <span>Tasks finished per day</span></h3>
+        <div class="velocity-chart">
+          ${days.map(d => {
+            const pct = Math.round((d.count / maxDayCompleted) * 100);
+            return `
+              <div class="velocity-col">
+                <span class="velocity-count">${d.count || ''}</span>
+                <div class="velocity-bar-track">
+                  <div class="velocity-bar-fill${d.isToday ? " today" : ""}" style="height:${Math.max(pct, d.count > 0 ? 12 : 0)}%;"></div>
+                </div>
+                <span class="velocity-day" ${d.isToday ? 'style="color:var(--text-0); font-weight:800;"' : ''}>${d.isToday ? "Today" : d.dayLabel}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+
+      <div id="insightsCalendarPanel"></div>
+
+      <div class="insights-row">
+        <div class="insights-panel">
+          <h3>Status Breakdown <span>Distribution across columns</span></h3>
+          <div class="breakdown-list">
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>Daily</span><b>${daily.length} (${totalActive ? Math.round((daily.length/totalActive)*100) : 0}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill daily" style="width:${totalActive ? Math.round((daily.length/totalActive)*100) : 0}%"></div></div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>In progress</span><b>${inProgress.length} (${totalActive ? Math.round((inProgress.length/totalActive)*100) : 0}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill inprogress" style="width:${totalActive ? Math.round((inProgress.length/totalActive)*100) : 0}%"></div></div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>Completed</span><b>${completed.length} (${completionRate}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill completed" style="width:${completionRate}%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insights-panel">
+          <h3>Priority Distribution <span>High / Medium / Low</span></h3>
+          <div class="breakdown-list">
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>High Priority</span><b>${highCt} (${totalActive ? Math.round((highCt/totalActive)*100) : 0}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill high" style="width:${totalActive ? Math.round((highCt/totalActive)*100) : 0}%"></div></div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>Medium Priority</span><b>${medCt} (${totalActive ? Math.round((medCt/totalActive)*100) : 0}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill medium" style="width:${totalActive ? Math.round((medCt/totalActive)*100) : 0}%"></div></div>
+            </div>
+            <div class="breakdown-item">
+              <div class="breakdown-head"><span>Low Priority</span><b>${lowCt} (${totalActive ? Math.round((lowCt/totalActive)*100) : 0}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill low" style="width:${totalActive ? Math.round((lowCt/totalActive)*100) : 0}%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insights-panel">
+        <h3>Most Active Projects <span>Where your active tasks are concentrated</span></h3>
+        ${topProjects.length ? `
+          <div class="insights-project-list">
+            ${topProjects.map(({project, count}) => `
+              <div class="insights-project-pill">
+                <span class="project-chip" style="margin-top:0; --proj-color:${projectColor(project.id)}">${escapeHtml(project.name)}</span>
+                <span class="count">${count} task${count===1 ? '' : 's'}</span>
+              </div>
+            `).join("")}
+          </div>
+        ` : `<div class="insights-empty">No tasks are assigned to a project yet.</div>`}
+      </div>
+    </div>
+  `;
+
+  updateCalendarPanel(all);
+}
+
+// ---- Monthly calendar panel: navigable by month AND year, shows per-day
+// completion/due activity, with a click-through detail list for any day. ----
+function calendarPanelHTML(all){
+  const year = insightsCalYear, month = insightsCalMonth;
+  const pad = n => String(n).padStart(2, "0");
+  const monthLabel = new Date(year, month, 1).toLocaleDateString(undefined, { month: "long" });
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
+
+  const dayStats = {};
+  for(let d = 1; d <= daysInMonth; d++){
+    dayStats[`${year}-${pad(month+1)}-${pad(d)}`] = { completed: [], due: [] };
+  }
+  all.forEach(t=>{
+    if(t.completedOn){
+      const cDate = t.completedOn.slice(0, 10);
+      if(dayStats[cDate]) dayStats[cDate].completed.push(t);
+    }
+    if(t.dueDate && dayStats[t.dueDate] && t.status !== "completed"){
+      dayStats[t.dueDate].due.push(t);
+    }
+  });
+
+  let monthCompletedCt = 0, monthDueCt = 0, monthOverdueCt = 0;
+  Object.entries(dayStats).forEach(([dateStr, s])=>{
+    monthCompletedCt += s.completed.length;
+    monthDueCt += s.due.length;
+    if(s.due.length && new Date(dateStr + "T00:00:00") < todayMidnight) monthOverdueCt += s.due.length;
+  });
+
+  // Year options: a sane range around today, widened to cover any task dates
+  // that fall outside it, so old or future-dated data is always reachable.
+  const nowYear = new Date().getFullYear();
+  let minYear = nowYear - 1, maxYear = nowYear + 1;
+  all.forEach(t=>{
+    [t.createdAt, t.dueDate, t.completedOn].forEach(v=>{
+      if(!v) return;
+      const y = parseInt(String(v).slice(0,4), 10);
+      if(!isNaN(y)){ minYear = Math.min(minYear, y); maxYear = Math.max(maxYear, y); }
+    });
+  });
+  maxYear = Math.max(maxYear, year);
+  minYear = Math.min(minYear, year);
+
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const dowLabels = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+  let cells = "";
+  for(let i = 0; i < firstDayOfWeek; i++) cells += `<div class="cal-cell empty"></div>`;
+  for(let d = 1; d <= daysInMonth; d++){
+    const dateStr = `${year}-${pad(month+1)}-${pad(d)}`;
+    const s = dayStats[dateStr];
+    const isToday = dateStr === todayStr;
+    const hasActivity = s.completed.length > 0 || s.due.length > 0;
+    cells += `<div class="cal-cell${isToday ? " today" : ""}${hasActivity ? " has-activity" : ""}" ${hasActivity ? `data-date="${dateStr}" tabindex="0"` : ""}>
+      <span class="cal-daynum">${d}</span>
+      ${hasActivity ? `<div class="cal-indicators">
+        ${s.completed.length ? `<span class="cal-dot completed">${s.completed.length}</span>` : ""}
+        ${s.due.length ? `<span class="cal-dot due">${s.due.length}</span>` : ""}
+      </div>` : ""}
+    </div>`;
+  }
+
+  return `
+    <div class="insights-panel" id="insightsCalendarPanel">
+      <h3>Monthly Calendar <span>Completions and due dates by day</span></h3>
+      <div class="cal-header">
+        <button type="button" class="icon-btn" id="calPrevBtn" title="Previous month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <select class="select" id="calMonthSelect">
+          ${monthNames.map((m,i)=>`<option value="${i}" ${i===month?"selected":""}>${m}</option>`).join("")}
+        </select>
+        <select class="select" id="calYearSelect">
+          ${Array.from({length: maxYear-minYear+1}, (_,i)=>minYear+i).map(y=>`<option value="${y}" ${y===year?"selected":""}>${y}</option>`).join("")}
+        </select>
+        <button type="button" class="icon-btn" id="calNextBtn" title="Next month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <button type="button" class="btn ghost" id="calTodayBtn">Today</button>
+      </div>
+      <div class="cal-summary">
+        <span><b>${monthCompletedCt}</b> completed</span>
+        <span><b>${monthDueCt}</b> due</span>
+        <span${monthOverdueCt > 0 ? ' class="overdue"' : ''}><b>${monthOverdueCt}</b> overdue</span>
+      </div>
+      <div class="cal-grid cal-grid-head">
+        ${dowLabels.map(d=>`<div class="cal-dow">${d}</div>`).join("")}
+      </div>
+      <div class="cal-grid">${cells}</div>
+      <div class="cal-day-detail" id="calDayDetail" style="display:none;"></div>
+    </div>
+  `;
+}
+
+function updateCalendarPanel(all){
+  const container = document.getElementById("insightsCalendarPanel");
+  if(!container) return;
+  container.outerHTML = calendarPanelHTML(all);
+  attachCalendarListeners(all);
+}
+
+function attachCalendarListeners(all){
+  const prevBtn = document.getElementById("calPrevBtn");
+  const nextBtn = document.getElementById("calNextBtn");
+  const todayBtn = document.getElementById("calTodayBtn");
+  const monthSel = document.getElementById("calMonthSelect");
+  const yearSel = document.getElementById("calYearSelect");
+
+  if(prevBtn) prevBtn.addEventListener("click", ()=>{
+    insightsCalMonth--;
+    if(insightsCalMonth < 0){ insightsCalMonth = 11; insightsCalYear--; }
+    updateCalendarPanel(all);
+  });
+  if(nextBtn) nextBtn.addEventListener("click", ()=>{
+    insightsCalMonth++;
+    if(insightsCalMonth > 11){ insightsCalMonth = 0; insightsCalYear++; }
+    updateCalendarPanel(all);
+  });
+  if(todayBtn) todayBtn.addEventListener("click", ()=>{
+    const now = new Date();
+    insightsCalMonth = now.getMonth();
+    insightsCalYear = now.getFullYear();
+    updateCalendarPanel(all);
+  });
+  if(monthSel) monthSel.addEventListener("change", (e)=>{
+    insightsCalMonth = parseInt(e.target.value, 10);
+    updateCalendarPanel(all);
+  });
+  if(yearSel) yearSel.addEventListener("change", (e)=>{
+    insightsCalYear = parseInt(e.target.value, 10);
+    updateCalendarPanel(all);
+  });
+
+  document.querySelectorAll(".cal-cell.has-activity").forEach(cell=>{
+    const open = ()=> showCalDayDetail(cell.dataset.date, all);
+    cell.addEventListener("click", open);
+    cell.addEventListener("keydown", (e)=>{ if(e.key === "Enter") open(); });
+  });
+}
+
+function showCalDayDetail(dateStr, all){
+  const detail = document.getElementById("calDayDetail");
+  if(!detail) return;
+  const completedTasks = all.filter(t => t.completedOn && t.completedOn.slice(0,10) === dateStr);
+  const dueTasks = all.filter(t => t.dueDate === dateStr && t.status !== "completed");
+  const label = new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+  detail.style.display = "block";
+  detail.innerHTML = `
+    <div class="cal-detail-head">${label}</div>
+    ${completedTasks.length ? `<div class="cal-detail-group"><b>Completed</b>
+      ${completedTasks.map(t=>`<div class="cal-detail-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>${escapeHtml(t.title)}</div>`).join("")}
+    </div>` : ""}
+    ${dueTasks.length ? `<div class="cal-detail-group"><b>Due</b>
+      ${dueTasks.map(t=>`<div class="cal-detail-item"><span class="pri-chip priority-${t.priority}" style="margin:0;">${t.priority}</span>${escapeHtml(t.title)}</div>`).join("")}
+    </div>` : ""}
+    ${!completedTasks.length && !dueTasks.length ? `<div class="cal-detail-item">No activity that day.</div>` : ""}
+  `;
+}
+
+const insightsBtn = document.getElementById("insightsBtn");
+if(insightsBtn) insightsBtn.addEventListener("click", openInsightsModal);
+const insightsModalClose = document.getElementById("insightsModalClose");
+if(insightsModalClose) insightsModalClose.addEventListener("click", ()=>closeOverlay("insightsModalOverlay"));
 
 /* ============================================================
    EXPORT / IMPORT
