@@ -406,7 +406,7 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_asc",
+        "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
