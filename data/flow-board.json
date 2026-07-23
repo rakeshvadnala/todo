@@ -57,9 +57,9 @@
           "description": "Onboard the DevBox Application",
           "priority": "medium",
           "dueDate": "2026-07-23",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -4.5,
+          "order": 1783592762267,
           "subtasks": [
             {
               "id": "tmru7xu2y0qzsok9",
@@ -69,9 +69,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-21T05:34:25.492Z",
-          "updatedAt": "2026-07-22T11:04:25.617Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-23T05:14:48.610Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-23T05:14:48.610Z"
         },
         {
           "id": "tmrswevu4pv7becw",
