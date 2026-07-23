@@ -341,20 +341,6 @@
           "updatedAt": "2026-07-23T06:46:47.442Z",
           "completedBy": null,
           "completedOn": null
-        },
-        {
-          "id": "tmrxfhf1ybzfhiq5",
-          "title": "Example: a finished task",
-          "description": "Completed tasks keep a permanent record of who finished them and when.",
-          "priority": "low",
-          "dueDate": null,
-          "status": "completed",
-          "archived": false,
-          "order": 1784806023894,
-          "createdAt": "2026-07-23T08:08:43.894Z",
-          "updatedAt": "2026-07-23T11:18:43.894Z",
-          "completedBy": "Flow",
-          "completedOn": "2026-07-23T11:18:43.894Z"
         }
       ],
       "projects": [
