@@ -102,12 +102,17 @@
             {
               "id": "tmrx6op5o95fwyvd",
               "text": "Call has been competed with DB Team regarding the Custom Role and LoginTime",
+              "done": true
+            },
+            {
+              "id": "tmrxetvtmkq3cffi",
+              "text": "DB Team needs to provide the custom role with our service account",
               "done": false
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-23T07:22:28.244Z",
+          "updatedAt": "2026-07-23T11:10:27.005Z",
           "completedBy": null,
           "completedOn": null
         },
