@@ -341,6 +341,48 @@
           "updatedAt": "2026-07-23T06:46:47.442Z",
           "completedBy": null,
           "completedOn": null
+        },
+        {
+          "id": "tmrxfhf1ykjlrh94",
+          "title": "Welcome to Flow 👋",
+          "description": "This board saves everything locally in your browser. Try dragging this card to another column.",
+          "priority": "medium",
+          "dueDate": null,
+          "status": "daily",
+          "archived": false,
+          "order": 1784805723894,
+          "createdAt": "2026-07-23T09:28:43.894Z",
+          "updatedAt": "2026-07-23T09:28:43.894Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrxfhf1yoi4itfk",
+          "title": "Example: in-progress work",
+          "description": "Tasks here show up in the middle column until they're done.",
+          "priority": "high",
+          "dueDate": "2026-07-25",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1784805923894,
+          "createdAt": "2026-07-23T10:28:43.894Z",
+          "updatedAt": "2026-07-23T10:58:43.894Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrxfhf1ybzfhiq5",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1784806023894,
+          "createdAt": "2026-07-23T08:08:43.894Z",
+          "updatedAt": "2026-07-23T11:18:43.894Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-23T11:18:43.894Z"
         }
       ],
       "projects": [
@@ -398,11 +440,10 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_asc",
+        "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
-        "projectFilter": "all",
-        "userName": "Rakesh"
+        "projectFilter": "all"
       }
     },
     "rajan": {
