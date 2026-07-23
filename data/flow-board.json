@@ -4,6 +4,22 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmrx2wo9v9brobv9",
+          "title": "Onboard PowerApps-EGADEV as Separate Application",
+          "description": "",
+          "priority": "high",
+          "dueDate": "2026-07-23",
+          "status": "inprogress",
+          "archived": false,
+          "order": -1.75,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-23T05:36:40.675Z",
+          "updatedAt": "2026-07-23T05:36:43.273Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmrvna5hn6l1d3cb",
           "title": "Intune Dashboards in PROD",
           "description": "Intune Dashboards in PROD",
