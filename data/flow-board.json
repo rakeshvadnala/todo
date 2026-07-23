@@ -108,13 +108,13 @@
             {
               "id": "tmrxetvtmkq3cffi",
               "text": "DB Team needs to provide the custom role with our service account",
-              "done": false,
-              "updatedAt": "2026-07-23T11:22:01.433Z"
+              "done": true,
+              "updatedAt": "2026-07-23T12:38:50.588Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-23T11:22:03.017Z",
+          "updatedAt": "2026-07-23T12:38:50.588Z",
           "completedBy": null,
           "completedOn": null
         },
