@@ -9,15 +9,15 @@
           "description": "",
           "priority": "high",
           "dueDate": "2026-07-23",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -1.75,
+          "order": 1783592762270,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-23T05:36:40.675Z",
-          "updatedAt": "2026-07-23T05:36:47.014Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-23T06:31:43.325Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-23T06:31:43.325Z"
         },
         {
           "id": "tmrvna5hn6l1d3cb",
@@ -97,11 +97,24 @@
           "dueDate": "2026-07-23",
           "status": "inprogress",
           "archived": false,
-          "order": -3.25,
-          "subtasks": [],
+          "order": -3.75,
+          "subtasks": [
+            {
+              "id": "tmrx6op5o95fwyvd",
+              "text": "Call has been competed with DB Team regarding the Custom Role and LoginTime",
+              "done": true,
+              "updatedAt": "2026-07-23T11:21:56.878Z"
+            },
+            {
+              "id": "tmrxetvtmkq3cffi",
+              "text": "DB Team needs to provide the custom role with our service account",
+              "done": false,
+              "updatedAt": "2026-07-23T11:22:01.433Z"
+            }
+          ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-22T11:01:13.131Z",
+          "updatedAt": "2026-07-23T11:22:03.017Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -170,12 +183,12 @@
             {
               "id": "tmrf2jvvpsy3cdrw",
               "text": "Delete user after disable 90days",
-              "done": true
+              "done": false
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-22T11:19:45.019Z",
+          "updatedAt": "2026-07-23T08:34:04.607Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -203,7 +216,7 @@
           "dueDate": "2026-07-24",
           "status": "daily",
           "archived": false,
-          "order": 1783584332315.5,
+          "order": 1783592364926,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
@@ -228,7 +241,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-23T05:35:02.197Z",
+          "updatedAt": "2026-07-23T06:30:41.571Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -255,7 +268,7 @@
           "priority": "medium",
           "dueDate": "2026-07-13",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762271,
           "subtasks": [
             {
@@ -271,7 +284,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-20T06:16:58.026Z",
+          "updatedAt": "2026-07-23T06:36:19.914Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T05:21:35.538Z"
         },
@@ -321,11 +334,11 @@
           "dueDate": "2026-07-20",
           "status": "daily",
           "archived": false,
-          "order": 1783679483827,
+          "order": 1783592364926,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-07-20T06:16:24.629Z",
+          "updatedAt": "2026-07-23T06:46:47.442Z",
           "completedBy": null,
           "completedOn": null
         }
@@ -394,7 +407,36 @@
     },
     "rajan": {
       "displayName": "Rajan",
-      "tasks": [],
+      "tasks": [
+        {
+          "id": "tmrddf3uv5wwgs4p",
+          "title": "Example: in-progress work",
+          "description": "Tasks here show up in the middle column until they're done.",
+          "priority": "high",
+          "dueDate": "2026-07-11",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1783593133319,
+          "createdAt": "2026-07-09T09:35:33.319Z",
+          "updatedAt": "2026-07-09T10:05:33.319Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrddf3uvspl35lw",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1783593233319,
+          "createdAt": "2026-07-09T07:15:33.319Z",
+          "updatedAt": "2026-07-09T10:25:33.319Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-09T10:25:33.319Z"
+        }
+      ],
       "projects": [],
       "settings": {
         "theme": "light",
@@ -486,7 +528,8 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     }
   }
