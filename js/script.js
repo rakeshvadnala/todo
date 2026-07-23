@@ -729,6 +729,8 @@ function sortTasks(tasks){
 }
 
 const expandedCardIds = new Set(); // session-only UI state: which cards have their checklist open
+let selectMode = false; // whether bulk-select mode is active
+const selectedTaskIds = new Set(); // ids currently selected while in bulk-select mode
 
 function subtaskPanelHTML(t){
   const subs = t.subtasks || [];
@@ -746,7 +748,7 @@ function subtaskPanelHTML(t){
       <div class="subtask-mini-progress"><div style="width:${pct}%"></div></div>
       ${expanded ? `<div class="subtask-checklist">
         ${subs.map(s => `
-          <label class="subtask-check-row">
+          <label class="subtask-check-row" title="${subtaskTimestampTitle(s)}">
             <input type="checkbox" data-task-id="${t.id}" data-sub-id="${s.id}" ${s.done ? "checked" : ""}>
             <span class="${s.done ? "done" : ""}">${escapeHtml(s.text)}</span>
           </label>
@@ -755,12 +757,23 @@ function subtaskPanelHTML(t){
     </div>`;
 }
 
+function subtaskTimestampTitle(s){
+  const parts = [];
+  if(s.createdAt) parts.push(`Added ${fmtDateTime(s.createdAt)}`);
+  if(s.updatedAt && s.updatedAt !== s.createdAt) parts.push(`Updated ${fmtDateTime(s.updatedAt)}`);
+  return escapeHtml(parts.join(" · "));
+}
+
 function cardHTML(t){
   const due = dueMeta(t.dueDate);
   const isDone = t.status === "completed";
   const proj = t.projectId ? findProject(t.projectId) : null;
+  const isSelected = selectedTaskIds.has(t.id);
   return `
-  <div class="card priority-${t.priority}${isDone ? " done" : ""}" data-id="${t.id}" tabindex="0" role="group" aria-label="${escapeHtml(t.title)}">
+  <div class="card priority-${t.priority}${isDone ? " done" : ""}${isSelected ? " selected" : ""}" data-id="${t.id}" tabindex="0" role="group" aria-label="${escapeHtml(t.title)}">
+    ${selectMode ? `<label class="card-select-check">
+      <input type="checkbox" class="bulk-select-checkbox" data-id="${t.id}" ${isSelected ? "checked" : ""}>
+    </label>` : ""}
     <div class="card-top">
       <div class="card-title">${escapeHtml(t.title)}</div>
       <span class="pri-chip priority-${t.priority}">${t.priority}</span>
@@ -875,11 +888,25 @@ function attachCardListeners(){
     btn.addEventListener("click", (e)=>{ e.stopPropagation(); archiveTask(btn.dataset.id); });
   });
   document.querySelectorAll(".card").forEach(card=>{
-    card.addEventListener("dblclick", ()=> openTaskModal(card.dataset.id));
+    card.addEventListener("dblclick", ()=>{ if(!selectMode) openTaskModal(card.dataset.id); });
     card.addEventListener("keydown", (e)=>{
+      if(selectMode){
+        if(e.key === "Enter"){ e.preventDefault(); toggleCardSelection(card.dataset.id); }
+        return;
+      }
       if(e.key === "Enter") openTaskModal(card.dataset.id);
       if(e.key === "Delete") confirmDeleteTask(card.dataset.id);
     });
+    if(selectMode){
+      card.addEventListener("click", (e)=>{
+        if(e.target.closest("button") || e.target.closest(".bulk-select-checkbox") || e.target.closest(".subtask-panel")) return;
+        toggleCardSelection(card.dataset.id);
+      });
+    }
+  });
+  document.querySelectorAll(".bulk-select-checkbox").forEach(cb=>{
+    cb.addEventListener("click", (e)=> e.stopPropagation());
+    cb.addEventListener("change", ()=> toggleCardSelection(cb.dataset.id));
   });
   document.querySelectorAll(".subtask-summary").forEach(btn=>{
     btn.addEventListener("click", (e)=>{
@@ -897,6 +924,7 @@ function attachCardListeners(){
       const s = t && (t.subtasks || []).find(s=>s.id === subId);
       if(!s) return;
       s.done = cb.checked;
+      s.updatedAt = nowISO();
       t.updatedAt = nowISO();
       saveState();
       renderBoard();
@@ -990,15 +1018,42 @@ function restoreTask(id){
 }
 
 let pendingDeleteId = null;
+let pendingBulkDeleteIds = null;
 function confirmDeleteTask(id){
   pendingDeleteId = id;
+  pendingBulkDeleteIds = null;
   const t = findTask(id);
   document.getElementById("confirmText").innerHTML = `Delete <b>"${escapeHtml(t ? t.title : "this task")}"</b>? This can't be undone.`;
   openOverlay("confirmModalOverlay");
 }
-document.getElementById("confirmCancelBtn").addEventListener("click", ()=>{ pendingDeleteId=null; closeOverlay("confirmModalOverlay"); });
+function confirmBulkDelete(ids){
+  if(!ids.length) return;
+  pendingBulkDeleteIds = ids.slice();
+  pendingDeleteId = null;
+  document.getElementById("confirmText").innerHTML = `Delete <b>${ids.length} task${ids.length===1?"":"s"}</b>? This can't be undone.`;
+  openOverlay("confirmModalOverlay");
+}
+document.getElementById("confirmCancelBtn").addEventListener("click", ()=>{ pendingDeleteId=null; pendingBulkDeleteIds=null; closeOverlay("confirmModalOverlay"); });
 document.getElementById("confirmOkBtn").addEventListener("click", ()=>{
-  if(pendingDeleteId){
+  if(pendingBulkDeleteIds){
+    const removed = [];
+    const removedAt = [];
+    pendingBulkDeleteIds.forEach(id=>{
+      const idx = state.tasks.findIndex(t=>t.id===id);
+      if(idx > -1){
+        removedAt.push(idx);
+        removed.push(...state.tasks.splice(idx,1));
+      }
+    });
+    if(removed.length){
+      saveState();
+      exitSelectMode();
+      showToast(`Deleted ${removed.length} task${removed.length===1?"":"s"}`, "success", "Undo", ()=>{
+        removed.forEach(t=> state.tasks.push(t));
+        saveState(); renderBoard();
+      });
+    }
+  } else if(pendingDeleteId){
     const idx = state.tasks.findIndex(t=>t.id===pendingDeleteId);
     if(idx > -1){
       const [removed] = state.tasks.splice(idx,1);
@@ -1010,7 +1065,113 @@ document.getElementById("confirmOkBtn").addEventListener("click", ()=>{
     }
   }
   pendingDeleteId = null;
+  pendingBulkDeleteIds = null;
   closeOverlay("confirmModalOverlay");
+});
+
+/* ============================================================
+   BULK SELECT & ACTIONS
+   ============================================================ */
+function toggleCardSelection(id){
+  if(selectedTaskIds.has(id)) selectedTaskIds.delete(id); else selectedTaskIds.add(id);
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if(card){
+    card.classList.toggle("selected", selectedTaskIds.has(id));
+    const cb = card.querySelector(".bulk-select-checkbox");
+    if(cb) cb.checked = selectedTaskIds.has(id);
+  }
+  updateBulkActionBar();
+}
+
+function toggleSelectMode(){
+  selectMode = !selectMode;
+  if(!selectMode) selectedTaskIds.clear();
+  updateBulkActionBar();
+  renderBoard();
+}
+
+function exitSelectMode(){
+  selectMode = false;
+  selectedTaskIds.clear();
+  updateBulkActionBar();
+  renderBoard();
+}
+
+function updateBulkActionBar(){
+  const toggleBtn = document.getElementById("bulkSelectToggleBtn");
+  const bar = document.getElementById("bulkActionBar");
+  toggleBtn.classList.toggle("active", selectMode);
+  bar.classList.toggle("open", selectMode);
+  document.body.classList.toggle("select-mode", selectMode);
+  document.getElementById("bulkCount").textContent = `${selectedTaskIds.size} selected`;
+  document.getElementById("bulkMoveSelect").value = "";
+}
+
+function bulkMoveTo(newStatus){
+  const ids = [...selectedTaskIds];
+  let movedCount = 0;
+  ids.forEach(id=>{
+    const t = findTask(id);
+    if(!t || t.status === newStatus) return;
+    t.status = newStatus;
+    t.order = Date.now() + movedCount; // keeps the batch's relative order, lands at the end
+    t.updatedAt = nowISO();
+    if(newStatus === "completed"){
+      t.completedBy = currentDisplayName || "Me";
+      t.completedOn = nowISO();
+    } else {
+      t.completedBy = null;
+      t.completedOn = null;
+    }
+    movedCount++;
+  });
+  if(movedCount > 0){
+    saveState();
+    const label = COLUMNS.find(c=>c.key===newStatus).label;
+    showToast(`Moved ${movedCount} task${movedCount===1?"":"s"} to ${label}`, "success");
+  }
+  exitSelectMode();
+}
+
+function bulkArchive(){
+  const ids = [...selectedTaskIds];
+  let archivedCount = 0, skipped = 0;
+  ids.forEach(id=>{
+    const t = findTask(id);
+    if(!t) return;
+    if(t.status !== "completed"){ skipped++; return; }
+    t.archived = true;
+    t.updatedAt = nowISO();
+    archivedCount++;
+  });
+  if(archivedCount > 0){
+    saveState();
+    showToast(`Archived ${archivedCount} task${archivedCount===1?"":"s"}${skipped ? `, skipped ${skipped} (not completed)` : ""}`, "success");
+  } else if(skipped > 0){
+    showToast(`Nothing archived — selected tasks aren't completed yet`, "error");
+  }
+  exitSelectMode();
+}
+
+document.getElementById("bulkSelectToggleBtn").addEventListener("click", toggleSelectMode);
+document.getElementById("bulkClearBtn").addEventListener("click", exitSelectMode);
+document.getElementById("bulkMoveSelect").addEventListener("change", (e)=>{
+  const newStatus = e.target.value;
+  if(!newStatus || selectedTaskIds.size === 0) return;
+  bulkMoveTo(newStatus);
+});
+document.getElementById("bulkArchiveBtn").addEventListener("click", ()=>{
+  if(selectedTaskIds.size === 0) return;
+  bulkArchive();
+});
+document.getElementById("bulkDeleteBtn").addEventListener("click", ()=>{
+  if(selectedTaskIds.size === 0) return;
+  confirmBulkDelete([...selectedTaskIds]);
+});
+document.getElementById("bulkSelectAllBtn").addEventListener("click", ()=>{
+  getVisibleTasks().forEach(t=> selectedTaskIds.add(t.id));
+  updateBulkActionBar();
+  renderBoard();
 });
 
 /* ============================================================
@@ -1025,6 +1186,8 @@ function attachDnD(){
 }
 
 function onPointerDown(e){
+  // dragging is disabled while selecting multiple tasks — clicking a card toggles selection instead
+  if(selectMode) return;
   // ignore drags starting on buttons or the subtask checklist (checkboxes/toggle)
   if(e.target.closest("button") || e.target.closest(".subtask-panel")) return;
   if(e.button !== undefined && e.button !== 0 && e.pointerType === "mouse") return;
@@ -1223,7 +1386,10 @@ function renderSubtaskEditor(){
     list.innerHTML = currentSubtasks.map(s => `
       <div class="subtask-row" data-id="${s.id}">
         <input type="checkbox" class="subtask-row-check" ${s.done ? "checked" : ""}>
-        <span class="subtask-row-text ${s.done ? "done" : ""}">${escapeHtml(s.text)}</span>
+        <div class="subtask-row-main">
+          <span class="subtask-row-text ${s.done ? "done" : ""}">${escapeHtml(s.text)}</span>
+          ${subtaskTimestampTitle(s) ? `<span class="subtask-row-meta">${subtaskTimestampTitle(s)}</span>` : ""}
+        </div>
         <button type="button" class="subtask-row-remove" title="Remove subtask">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
@@ -1239,7 +1405,7 @@ function renderSubtaskEditor(){
     cb.addEventListener("change", ()=>{
       const id = cb.closest(".subtask-row").dataset.id;
       const s = currentSubtasks.find(s=>s.id===id);
-      if(s) s.done = cb.checked;
+      if(s){ s.done = cb.checked; s.updatedAt = nowISO(); }
       renderSubtaskEditor();
     });
   });
@@ -1256,7 +1422,8 @@ function addSubtaskFromInput(){
   const input = document.getElementById("subtaskInput");
   const text = input.value.trim();
   if(!text) return;
-  currentSubtasks.push({ id: uid(), text: text.slice(0,200), done:false });
+  const now = nowISO();
+  currentSubtasks.push({ id: uid(), text: text.slice(0,200), done:false, createdAt: now, updatedAt: now });
   input.value = "";
   renderSubtaskEditor();
   input.focus();
@@ -1840,7 +2007,13 @@ importFileInput.addEventListener("change", (e)=>{
           subtasks: Array.isArray(raw.subtasks)
             ? raw.subtasks
                 .filter(s => s && s.text)
-                .map(s => ({ id: s.id || uid(), text: String(s.text).slice(0,200), done: !!s.done }))
+                .map(s => ({
+                  id: s.id || uid(),
+                  text: String(s.text).slice(0,200),
+                  done: !!s.done,
+                  createdAt: s.createdAt || raw.createdAt || nowISO(),
+                  updatedAt: s.updatedAt || s.createdAt || raw.updatedAt || nowISO()
+                }))
             : [],
           projectId: raw.projectId && projectIdMap[raw.projectId] ? projectIdMap[raw.projectId] : null,
           createdAt: raw.createdAt || nowISO(),
@@ -1953,9 +2126,9 @@ function seedIfEmpty(){
       id: uid(), title:"Try adding a new task", description:"Click \"New task\" up top, or press N on your keyboard.",
       priority:"low", dueDate:null, status:"daily", archived:false, order: t0 - 300000,
       subtasks:[
-        { id: uid(), text:"Open the New task modal", done:true },
-        { id: uid(), text:"Give it a title and priority", done:false },
-        { id: uid(), text:"Try checking this box right on the card", done:false }
+        { id: uid(), text:"Open the New task modal", done:true, createdAt: mk(90), updatedAt: mk(88) },
+        { id: uid(), text:"Give it a title and priority", done:false, createdAt: mk(90), updatedAt: mk(90) },
+        { id: uid(), text:"Try checking this box right on the card", done:false, createdAt: mk(90), updatedAt: mk(90) }
       ],
       createdAt: mk(90), updatedAt: mk(90), completedBy:null, completedOn:null
     },
