@@ -156,8 +156,38 @@
     <option value="priority_asc">Priority: Low → High</option>
   </select>
 
+  <button class="btn ghost" id="bulkSelectToggleBtn" title="Select multiple tasks">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Select
+  </button>
+
   <div class="toolbar-spacer"></div>
   <span class="result-count" id="resultCount"></span>
+</div>
+
+<!-- ============ Bulk action bar (shown while selecting) ============ -->
+<div class="bulk-action-bar" id="bulkActionBar">
+  <span class="bulk-count" id="bulkCount">0 selected</span>
+  <div class="bulk-actions">
+    <select class="select" id="bulkMoveSelect">
+      <option value="">Move to…</option>
+      <option value="daily">Daily</option>
+      <option value="inprogress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
+    <button type="button" class="btn ghost" id="bulkArchiveBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/></svg>
+      Archive
+    </button>
+    <button type="button" class="btn danger" id="bulkDeleteBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      Delete
+    </button>
+    <button type="button" class="btn ghost" id="bulkSelectAllBtn">Select all visible</button>
+    <button type="button" class="icon-btn" id="bulkClearBtn" title="Exit selection mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
 </div>
 
 <!-- ============ Overall progress ============ -->
