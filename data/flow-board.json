@@ -440,20 +440,6 @@
       "displayName": "Rajan",
       "tasks": [
         {
-          "id": "tmrddf3uv5wwgs4p",
-          "title": "Example: in-progress work",
-          "description": "Tasks here show up in the middle column until they're done.",
-          "priority": "high",
-          "dueDate": "2026-07-11",
-          "status": "inprogress",
-          "archived": false,
-          "order": 1783593133319,
-          "createdAt": "2026-07-09T09:35:33.319Z",
-          "updatedAt": "2026-07-09T10:05:33.319Z",
-          "completedBy": null,
-          "completedOn": null
-        },
-        {
           "id": "tmrddf3uvspl35lw",
           "title": "Example: a finished task",
           "description": "Completed tasks keep a permanent record of who finished them and when.",
