@@ -222,9 +222,9 @@
           "description": "1. Microsoft Exchange Online – Shared Mailbox\n2. Azure DevOps - Krunal is working (API is testing)\n3. SAP DSP - Ticket is raised for lower env\n4. Azure Databricks - Saurabh",
           "priority": "medium",
           "dueDate": "2026-07-24",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1783592364926,
+          "order": 0.25,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
@@ -250,7 +250,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-24T05:22:47.133Z",
+          "updatedAt": "2026-07-24T05:23:35.595Z",
           "completedBy": null,
           "completedOn": null
         },
