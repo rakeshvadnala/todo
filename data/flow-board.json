@@ -36,7 +36,7 @@
         },
         {
           "id": "tms2rw07lkgrfar0",
-          "title": "Configure Dashboards and Access Review for Morpheus",
+          "title": "Morpheus - Configure Dashboards and Access Review",
           "description": "Configure Dashboards and Access Review for Morpheus",
           "priority": "medium",
           "dueDate": "2026-07-27",
@@ -61,7 +61,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-27T05:14:50.769Z",
-          "updatedAt": "2026-07-27T05:14:50.769Z",
+          "updatedAt": "2026-07-27T06:50:52.508Z",
           "completedBy": null,
           "completedOn": null
         },
