@@ -47,9 +47,9 @@
             {
               "id": "tms2rvp7l4xbcoqm",
               "text": "Dashboards",
-              "done": false,
+              "done": true,
               "createdAt": "2026-07-27T05:14:36.513Z",
-              "updatedAt": "2026-07-27T05:14:36.513Z"
+              "updatedAt": "2026-07-27T06:54:03.064Z"
             },
             {
               "id": "tms2rvth67gbouir",
@@ -61,7 +61,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-27T05:14:50.769Z",
-          "updatedAt": "2026-07-27T06:50:52.508Z",
+          "updatedAt": "2026-07-27T06:54:03.064Z",
           "completedBy": null,
           "completedOn": null
         },
