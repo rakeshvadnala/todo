@@ -5,7 +5,7 @@
       "tasks": [
         {
           "id": "tms2rwogfw37s9d9",
-          "title": "Configure Dashboards and Access Review for Dev-Box",
+          "title": "Dev-Box - Configure Dashboards and Access Review",
           "description": "Configure Dashboards and Access Review for Dev-Box",
           "priority": "medium",
           "dueDate": "2026-07-28",
@@ -30,7 +30,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-27T05:15:22.191Z",
-          "updatedAt": "2026-07-27T05:15:22.191Z",
+          "updatedAt": "2026-07-27T06:50:42.998Z",
           "completedBy": null,
           "completedOn": null
         },
