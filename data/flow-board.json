@@ -4,6 +4,37 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tms2rwogfw37s9d9",
+          "title": "Configure Dashboards and Access Review for Dev-Box",
+          "description": "Configure Dashboards and Access Review for Dev-Box",
+          "priority": "medium",
+          "dueDate": "2026-07-28",
+          "status": "daily",
+          "archived": false,
+          "order": 1785129322191,
+          "subtasks": [
+            {
+              "id": "tms2rwbor9akxr8m",
+              "text": "Dashboards",
+              "done": false,
+              "createdAt": "2026-07-27T05:15:05.643Z",
+              "updatedAt": "2026-07-27T05:15:05.643Z"
+            },
+            {
+              "id": "tms2rwhzxgdj8lrd",
+              "text": "Access Review",
+              "done": false,
+              "createdAt": "2026-07-27T05:15:13.821Z",
+              "updatedAt": "2026-07-27T05:15:13.821Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-27T05:15:22.191Z",
+          "updatedAt": "2026-07-27T05:15:22.191Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tms2rw07lkgrfar0",
           "title": "Configure Dashboards and Access Review for Morpheus",
           "description": "Configure Dashboards and Access Review for Morpheus",
