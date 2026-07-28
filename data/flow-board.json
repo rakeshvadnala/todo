@@ -40,9 +40,9 @@
           "description": "Configure Dashboards and Access Review for Morpheus",
           "priority": "medium",
           "dueDate": "2026-07-27",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1785129290769,
+          "order": 1783592762266,
           "subtasks": [
             {
               "id": "tms2rvp7l4xbcoqm",
@@ -61,9 +61,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-27T05:14:50.769Z",
-          "updatedAt": "2026-07-28T06:35:57.276Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-28T06:36:02.658Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-28T06:36:02.658Z"
         },
         {
           "id": "tmrx2wo9v9brobv9",
