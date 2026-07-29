@@ -72,9 +72,9 @@
           "description": "Configure Dashboards and Access Review for Dev-Box",
           "priority": "medium",
           "dueDate": "2026-07-28",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1784447658490.5,
+          "order": 1785245533071,
           "subtasks": [
             {
               "id": "tms2rwbor9akxr8m",
@@ -100,9 +100,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-27T05:15:22.191Z",
-          "updatedAt": "2026-07-29T10:25:01.224Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-29T10:25:05.470Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-29T10:25:05.470Z"
         },
         {
           "id": "tms2rw07lkgrfar0",
