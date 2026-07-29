@@ -4,6 +4,44 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tms60olds219gdj4",
+          "title": "Test-Cases for UAT",
+          "description": "",
+          "priority": "medium",
+          "dueDate": "2026-07-30",
+          "status": "daily",
+          "archived": false,
+          "order": 1785325460032,
+          "subtasks": [
+            {
+              "id": "tms60o0eqjuyulw3",
+              "text": "Netskope",
+              "done": false,
+              "createdAt": "2026-07-29T11:43:52.850Z",
+              "updatedAt": "2026-07-29T11:43:52.850Z"
+            },
+            {
+              "id": "tms60o2zntypb5yn",
+              "text": "Morpheus",
+              "done": false,
+              "createdAt": "2026-07-29T11:43:56.195Z",
+              "updatedAt": "2026-07-29T11:43:56.195Z"
+            },
+            {
+              "id": "tms60o59kwv0r3n4",
+              "text": "Devbox",
+              "done": false,
+              "createdAt": "2026-07-29T11:43:59.144Z",
+              "updatedAt": "2026-07-29T11:43:59.144Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-29T11:44:20.032Z",
+          "updatedAt": "2026-07-29T11:44:20.032Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tms5rkqszlayuddr",
           "title": "Custom SAV Roles for PAM & GAM",
           "description": "Custom SAV Roles for PAM & GAM",
