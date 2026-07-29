@@ -11,7 +11,7 @@
           "dueDate": "2026-07-30",
           "status": "daily",
           "archived": false,
-          "order": 1785325460032,
+          "order": 1785310163890,
           "subtasks": [
             {
               "id": "tms60o0eqjuyulw3",
@@ -37,7 +37,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T11:44:20.032Z",
-          "updatedAt": "2026-07-29T11:44:20.032Z",
+          "updatedAt": "2026-07-29T11:49:32.987Z",
           "completedBy": null,
           "completedOn": null
         },
