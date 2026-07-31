@@ -648,7 +648,7 @@
         }
       ],
       "settings": {
-        "theme": "light",
+        "theme": "dark",
         "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
