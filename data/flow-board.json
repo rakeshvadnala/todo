@@ -650,7 +650,7 @@
       "settings": {
         "theme": "light",
         "sort": "created_desc",
-        "priorityFilter": "all",
+        "priorityFilter": "low",
         "statusFilter": "all",
         "projectFilter": "all",
         "userName": "Rakesh",
