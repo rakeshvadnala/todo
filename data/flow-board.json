@@ -23,9 +23,9 @@
             {
               "id": "tms60o2zntypb5yn",
               "text": "Morpheus",
-              "done": false,
+              "done": true,
               "createdAt": "2026-07-29T11:43:56.195Z",
-              "updatedAt": "2026-07-31T07:46:01.860Z"
+              "updatedAt": "2026-07-31T08:23:31.286Z"
             },
             {
               "id": "tms60o59kwv0r3n4",
@@ -44,7 +44,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T11:44:20.032Z",
-          "updatedAt": "2026-07-31T07:46:01.860Z",
+          "updatedAt": "2026-07-31T08:23:31.286Z",
           "completedBy": null,
           "completedOn": null
         },
