@@ -415,9 +415,9 @@
           "description": "Wallix Access Review and Delete for Giovani",
           "priority": "medium",
           "dueDate": "2026-07-09",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -2.75,
+          "order": 1785474199615,
           "subtasks": [
             {
               "id": "tmrf2iktbi5vei03",
@@ -448,9 +448,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-24T08:18:12.137Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-03T07:06:16.828Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-03T07:06:16.828Z"
         },
         {
           "id": "tmrd2n8a1rl0l1r0",
