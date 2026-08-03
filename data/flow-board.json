@@ -41,9 +41,9 @@
           "description": "",
           "priority": "medium",
           "dueDate": "2026-07-31",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1785310163890,
+          "order": 1785474199615,
           "subtasks": [
             {
               "id": "tms60o0eqjuyulw3",
@@ -76,9 +76,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T11:44:20.032Z",
-          "updatedAt": "2026-08-03T08:29:22.535Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-03T08:30:07.334Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-03T08:30:07.334Z"
         },
         {
           "id": "tms5rkqszlayuddr",
