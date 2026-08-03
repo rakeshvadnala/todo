@@ -48,9 +48,9 @@
             {
               "id": "tms60o0eqjuyulw3",
               "text": "Netskope",
-              "done": false,
+              "done": true,
               "createdAt": "2026-07-29T11:43:52.850Z",
-              "updatedAt": "2026-07-29T11:43:52.850Z"
+              "updatedAt": "2026-08-03T08:08:28.683Z"
             },
             {
               "id": "tms60o2zntypb5yn",
@@ -76,7 +76,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T11:44:20.032Z",
-          "updatedAt": "2026-07-31T08:24:35.728Z",
+          "updatedAt": "2026-08-03T08:08:28.683Z",
           "completedBy": null,
           "completedOn": null
         },
