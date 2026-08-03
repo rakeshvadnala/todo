@@ -69,14 +69,14 @@
             {
               "id": "tms7jvanxiw8xksn",
               "text": "PowerApps",
-              "done": false,
+              "done": true,
               "createdAt": "2026-07-30T13:29:11.613Z",
-              "updatedAt": "2026-07-30T13:29:11.613Z"
+              "updatedAt": "2026-08-03T08:29:22.535Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T11:44:20.032Z",
-          "updatedAt": "2026-08-03T08:08:28.683Z",
+          "updatedAt": "2026-08-03T08:29:22.535Z",
           "completedBy": null,
           "completedOn": null
         },
