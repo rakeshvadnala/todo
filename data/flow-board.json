@@ -664,7 +664,7 @@
       ],
       "projects": [],
       "settings": {
-        "theme": "dark",
+        "theme": "light",
         "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
