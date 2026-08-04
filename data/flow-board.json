@@ -578,11 +578,18 @@
               "id": "tmrvm6frfcnxhsg4",
               "text": "Need to work on the feedback provided during demo before going to prod",
               "done": false
+            },
+            {
+              "id": "tmsedafxf5cqkznm",
+              "text": "Add the Status of User Account",
+              "done": true,
+              "createdAt": "2026-08-04T07:59:24.195Z",
+              "updatedAt": "2026-08-04T07:59:25.594Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-08-03T10:22:06.978Z",
+          "updatedAt": "2026-08-04T07:59:28.164Z",
           "completedBy": null,
           "completedOn": null
         },
