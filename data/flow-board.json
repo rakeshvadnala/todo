@@ -662,14 +662,66 @@
           "completedOn": "2026-07-23T11:18:43.894Z"
         }
       ],
+      "projects": [
+        {
+          "id": "tmrstr0zcei7ouzx",
+          "name": "EGA",
+          "tasks": [
+            {
+              "id": "tmrstrlfj13fgetf",
+              "title": "Test1",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527782463,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:42.463Z",
+              "updatedAt": "2026-07-20T06:09:42.463Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstqqfdsvsp71g",
+          "name": "SIB",
+          "tasks": []
+        },
+        {
+          "id": "tmrstr6b92dqtwig",
+          "name": "DOHA",
+          "tasks": [
+            {
+              "id": "tmrstrrl52uqdqmr",
+              "title": "test23",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527790441,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:50.441Z",
+              "updatedAt": "2026-07-20T06:09:50.441Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstyb5h80jwkd3",
+          "name": "Airtel"
+        }
+      ],
       "settings": {
         "theme": "light",
         "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
-        "userName": "Rakesh",
-        "selectedProjectId": "tmrstr0zcei7ouzx"
+        "userName": "Rakesh"
       }
     },
     "rajan": {
@@ -704,11 +756,13 @@
           "completedOn": "2026-07-09T10:25:33.319Z"
         }
       ],
+      "projects": [],
       "settings": {
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     },
     "saurabh": {
@@ -788,11 +842,13 @@
           "completedOn": "2026-07-11T07:50:57.852Z"
         }
       ],
+      "projects": [],
       "settings": {
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     }
   }
