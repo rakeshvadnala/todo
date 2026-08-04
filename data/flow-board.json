@@ -19,11 +19,18 @@
               "done": true,
               "createdAt": "2026-08-04T07:54:00.849Z",
               "updatedAt": "2026-08-04T07:54:02.268Z"
+            },
+            {
+              "id": "tmsed40zrptcn0qp",
+              "text": "Create the Shared Mailbox",
+              "done": false,
+              "createdAt": "2026-08-04T07:54:24.903Z",
+              "updatedAt": "2026-08-04T07:54:24.903Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-03T05:20:55.411Z",
-          "updatedAt": "2026-08-04T07:54:06.262Z",
+          "updatedAt": "2026-08-04T07:54:28.616Z",
           "completedBy": null,
           "completedOn": null
         },
