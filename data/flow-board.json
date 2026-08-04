@@ -9,13 +9,21 @@
           "description": "Microsoft Exchange Online – Shared Mailbox",
           "priority": "medium",
           "dueDate": "2026-08-07",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1785734455411,
-          "subtasks": [],
+          "order": -0.75,
+          "subtasks": [
+            {
+              "id": "tmsed3ifldzsd9jv",
+              "text": "Onboard for Shared Mailboxes & Roles",
+              "done": true,
+              "createdAt": "2026-08-04T07:54:00.849Z",
+              "updatedAt": "2026-08-04T07:54:02.268Z"
+            }
+          ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-03T05:20:55.411Z",
-          "updatedAt": "2026-08-03T05:20:55.411Z",
+          "updatedAt": "2026-08-04T07:54:06.262Z",
           "completedBy": null,
           "completedOn": null
         },
