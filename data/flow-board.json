@@ -721,7 +721,8 @@
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
-        "userName": "Rakesh"
+        "userName": "Rakesh",
+        "selectedProjectId": "tmrstr0zcei7ouzx"
       }
     },
     "rajan": {
@@ -761,8 +762,7 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all",
-        "projectFilter": "all"
+        "statusFilter": "all"
       }
     },
     "saurabh": {
@@ -847,8 +847,7 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all",
-        "projectFilter": "all"
+        "statusFilter": "all"
       }
     }
   }
