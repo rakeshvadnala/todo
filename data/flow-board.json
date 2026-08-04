@@ -613,7 +613,7 @@
           "id": "tmrespm0jct5hkou",
           "title": "SC2.0 Installation of AT OT for PROD",
           "description": "SC2.0 Installation of AT OT for PROD",
-          "priority": "low",
+          "priority": "medium",
           "dueDate": "2026-07-31",
           "status": "daily",
           "archived": false,
@@ -641,9 +641,9 @@
               "updatedAt": "2026-07-29T10:32:37.866Z"
             }
           ],
-          "projectId": "tmrstr0zcei7ouzx",
+          "projectId": null,
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-08-04T11:27:17.024Z",
+          "updatedAt": "2026-08-04T11:50:35.518Z",
           "completedBy": null,
           "completedOn": null
         },
