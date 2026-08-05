@@ -30,14 +30,14 @@
             {
               "id": "tmsfp6y0o4n2bv2t",
               "text": "Setup Access Review",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-05T06:20:22.584Z",
-              "updatedAt": "2026-08-05T06:20:22.584Z"
+              "updatedAt": "2026-08-05T07:59:08.054Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-05T06:20:31.558Z",
-          "updatedAt": "2026-08-05T06:20:31.558Z",
+          "updatedAt": "2026-08-05T07:59:08.054Z",
           "completedBy": null,
           "completedOn": null
         },
