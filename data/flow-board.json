@@ -4,6 +4,44 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmsfp74xygd4h15d",
+          "title": "Nozomi application Onboarding",
+          "description": "",
+          "priority": "medium",
+          "dueDate": "2026-08-05",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1785910831558,
+          "subtasks": [
+            {
+              "id": "tmsfp6a8kyb56ggv",
+              "text": "Onboarding",
+              "done": true,
+              "createdAt": "2026-08-05T06:19:51.764Z",
+              "updatedAt": "2026-08-05T06:19:53.470Z"
+            },
+            {
+              "id": "tmsfp6qyjy8vtzgi",
+              "text": "Set 3 level approvals",
+              "done": false,
+              "createdAt": "2026-08-05T06:20:13.435Z",
+              "updatedAt": "2026-08-05T06:20:13.435Z"
+            },
+            {
+              "id": "tmsfp6y0o4n2bv2t",
+              "text": "Setup Access Review",
+              "done": false,
+              "createdAt": "2026-08-05T06:20:22.584Z",
+              "updatedAt": "2026-08-05T06:20:22.584Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-05T06:20:31.558Z",
+          "updatedAt": "2026-08-05T06:20:31.558Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmscs6s8jfaxl8b6",
           "title": "Microsoft Exchange Online – Shared Mailbox",
           "description": "Microsoft Exchange Online – Shared Mailbox",
@@ -662,15 +700,66 @@
           "completedOn": "2026-07-23T11:18:43.894Z"
         }
       ],
-      "projects": [],
+      "projects": [
+        {
+          "id": "tmrstr0zcei7ouzx",
+          "name": "EGA",
+          "tasks": [
+            {
+              "id": "tmrstrlfj13fgetf",
+              "title": "Test1",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527782463,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:42.463Z",
+              "updatedAt": "2026-07-20T06:09:42.463Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstqqfdsvsp71g",
+          "name": "SIB",
+          "tasks": []
+        },
+        {
+          "id": "tmrstr6b92dqtwig",
+          "name": "DOHA",
+          "tasks": [
+            {
+              "id": "tmrstrrl52uqdqmr",
+              "title": "test23",
+              "description": "",
+              "priority": "medium",
+              "dueDate": null,
+              "status": "daily",
+              "archived": false,
+              "order": 1784527790441,
+              "subtasks": [],
+              "createdAt": "2026-07-20T06:09:50.441Z",
+              "updatedAt": "2026-07-20T06:09:50.441Z",
+              "completedBy": null,
+              "completedOn": null
+            }
+          ]
+        },
+        {
+          "id": "tmrstyb5h80jwkd3",
+          "name": "Airtel"
+        }
+      ],
       "settings": {
         "theme": "light",
         "sort": "created_desc",
         "priorityFilter": "all",
         "statusFilter": "all",
         "projectFilter": "all",
-        "userName": "Rakesh",
-        "selectedProjectId": "tmrstr0zcei7ouzx"
+        "userName": "Rakesh"
       }
     },
     "rajan": {
@@ -710,7 +799,8 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     },
     "saurabh": {
@@ -795,7 +885,8 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     }
   }
