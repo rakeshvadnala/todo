@@ -8,7 +8,7 @@
           "title": "Nozomi application Onboarding",
           "description": "",
           "priority": "medium",
-          "dueDate": "2026-08-05",
+          "dueDate": "2026-08-07",
           "status": "inprogress",
           "archived": false,
           "order": 1785910831558,
@@ -44,7 +44,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-05T06:20:31.558Z",
-          "updatedAt": "2026-08-06T09:06:47.915Z",
+          "updatedAt": "2026-08-06T09:06:56.935Z",
           "completedBy": null,
           "completedOn": null
         },
