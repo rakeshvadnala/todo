@@ -11,7 +11,7 @@
           "dueDate": "2026-08-12",
           "status": "daily",
           "archived": false,
-          "order": 1786007340835,
+          "order": 1783592364924,
           "subtasks": [
             {
               "id": "tmshamac514vk62t",
@@ -72,7 +72,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-06T09:09:00.835Z",
-          "updatedAt": "2026-08-06T09:09:00.835Z",
+          "updatedAt": "2026-08-06T13:39:10.731Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -823,11 +823,10 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_desc",
+        "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
-        "projectFilter": "all",
-        "userName": "Rakesh"
+        "projectFilter": "all"
       }
     },
     "rajan": {
