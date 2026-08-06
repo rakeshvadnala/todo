@@ -4,20 +4,412 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmshannz74e07vyw",
+          "title": "PROD Application Deployment",
+          "description": "",
+          "priority": "high",
+          "dueDate": "2026-08-12",
+          "status": "daily",
+          "archived": false,
+          "order": 1783592364924,
+          "subtasks": [
+            {
+              "id": "tmshamac514vk62t",
+              "text": "Exchange Online - 06-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:07:56.501Z",
+              "updatedAt": "2026-08-06T09:07:56.501Z"
+            },
+            {
+              "id": "tmshamhaudz8nhsm",
+              "text": "PowerApps - 07-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:05.526Z",
+              "updatedAt": "2026-08-06T09:08:05.526Z"
+            },
+            {
+              "id": "tmshamoo2igcxz7y",
+              "text": "eDiscovery - 10-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:15.074Z",
+              "updatedAt": "2026-08-06T09:08:15.074Z"
+            },
+            {
+              "id": "tmshamvdlnk2bhzr",
+              "text": "Netscope - 11-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:23.769Z",
+              "updatedAt": "2026-08-06T09:08:23.769Z"
+            },
+            {
+              "id": "tmshan1j2i9qhlqu",
+              "text": "Github - 11-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:31.742Z",
+              "updatedAt": "2026-08-06T09:08:31.742Z"
+            },
+            {
+              "id": "tmshan8zjjcw1a45",
+              "text": "Morpheus - 12-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:41.407Z",
+              "updatedAt": "2026-08-06T09:08:41.407Z"
+            },
+            {
+              "id": "tmshang325s6vusn",
+              "text": "DevBox - 12-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:50.606Z",
+              "updatedAt": "2026-08-06T09:08:50.606Z"
+            },
+            {
+              "id": "tmshanmwillohtdk",
+              "text": "Veracode - 12-Aug-26",
+              "done": false,
+              "createdAt": "2026-08-06T09:08:59.442Z",
+              "updatedAt": "2026-08-06T09:08:59.442Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-06T09:09:00.835Z",
+          "updatedAt": "2026-08-06T13:39:10.731Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmsfp74xygd4h15d",
+          "title": "Nozomi application Onboarding",
+          "description": "",
+          "priority": "medium",
+          "dueDate": "2026-08-07",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1785910831558,
+          "subtasks": [
+            {
+              "id": "tmsfp6a8kyb56ggv",
+              "text": "Onboarding",
+              "done": true,
+              "createdAt": "2026-08-05T06:19:51.764Z",
+              "updatedAt": "2026-08-05T06:19:53.470Z"
+            },
+            {
+              "id": "tmsfp6qyjy8vtzgi",
+              "text": "Set 3 level approvals",
+              "done": true,
+              "createdAt": "2026-08-05T06:20:13.435Z",
+              "updatedAt": "2026-08-06T09:06:38.444Z"
+            },
+            {
+              "id": "tmsfp6y0o4n2bv2t",
+              "text": "Setup Access Review",
+              "done": true,
+              "createdAt": "2026-08-05T06:20:22.584Z",
+              "updatedAt": "2026-08-05T07:59:08.054Z"
+            },
+            {
+              "id": "tmshakstnrd83w92",
+              "text": "Demo",
+              "done": false,
+              "createdAt": "2026-08-06T09:06:47.147Z",
+              "updatedAt": "2026-08-06T09:06:47.147Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-05T06:20:31.558Z",
+          "updatedAt": "2026-08-06T09:06:56.935Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmscs6s8jfaxl8b6",
+          "title": "Microsoft Exchange Online – Shared Mailbox",
+          "description": "Microsoft Exchange Online – Shared Mailbox",
+          "priority": "medium",
+          "dueDate": "2026-08-07",
+          "status": "inprogress",
+          "archived": false,
+          "order": -0.75,
+          "subtasks": [
+            {
+              "id": "tmsed3ifldzsd9jv",
+              "text": "Onboard for Shared Mailboxes & Roles",
+              "done": true,
+              "createdAt": "2026-08-04T07:54:00.849Z",
+              "updatedAt": "2026-08-04T07:54:02.268Z"
+            },
+            {
+              "id": "tmsed40zrptcn0qp",
+              "text": "Create the Shared Mailbox",
+              "done": false,
+              "createdAt": "2026-08-04T07:54:24.903Z",
+              "updatedAt": "2026-08-04T07:54:24.903Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-03T05:20:55.411Z",
+          "updatedAt": "2026-08-04T07:54:28.616Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmscrz7quekl2g2u",
+          "title": "Netskope - Groups needs to be checked in AD PROD",
+          "description": "Netskope - Groups needs to be checked in AD PROD",
+          "priority": "medium",
+          "dueDate": "2026-08-03",
+          "status": "completed",
+          "archived": true,
+          "order": 1785474199614,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-03T05:15:02.262Z",
+          "updatedAt": "2026-08-05T07:26:41.805Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-03T12:55:41.902Z"
+        },
+        {
+          "id": "tms60olds219gdj4",
+          "title": "Test-Cases for UAT",
+          "description": "",
+          "priority": "medium",
+          "dueDate": "2026-07-31",
+          "status": "completed",
+          "archived": true,
+          "order": 1785474199615,
+          "subtasks": [
+            {
+              "id": "tms60o0eqjuyulw3",
+              "text": "Netskope",
+              "done": true,
+              "createdAt": "2026-07-29T11:43:52.850Z",
+              "updatedAt": "2026-08-03T08:08:28.683Z"
+            },
+            {
+              "id": "tms60o2zntypb5yn",
+              "text": "Morpheus",
+              "done": true,
+              "createdAt": "2026-07-29T11:43:56.195Z",
+              "updatedAt": "2026-07-31T08:23:31.286Z"
+            },
+            {
+              "id": "tms60o59kwv0r3n4",
+              "text": "Devbox",
+              "done": true,
+              "createdAt": "2026-07-29T11:43:59.144Z",
+              "updatedAt": "2026-07-31T08:24:35.728Z"
+            },
+            {
+              "id": "tms7jvanxiw8xksn",
+              "text": "PowerApps",
+              "done": true,
+              "createdAt": "2026-07-30T13:29:11.613Z",
+              "updatedAt": "2026-08-03T08:29:22.535Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-29T11:44:20.032Z",
+          "updatedAt": "2026-08-05T07:26:26.888Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-03T08:30:07.334Z"
+        },
+        {
+          "id": "tms5rkqszlayuddr",
+          "title": "Custom SAV Roles for PAM & GAM",
+          "description": "Custom SAV Roles for PAM & GAM",
+          "priority": "high",
+          "dueDate": "2026-07-30",
+          "status": "completed",
+          "archived": true,
+          "order": 1785474199616,
+          "subtasks": [
+            {
+              "id": "tms5rke19ykkpvoy",
+              "text": "Custom_SAV_GAM",
+              "done": true,
+              "createdAt": "2026-07-29T07:29:07.340Z",
+              "updatedAt": "2026-07-31T05:03:15.946Z"
+            },
+            {
+              "id": "tms5rkm9yas9ivqk",
+              "text": "Custom_SAV_PAM",
+              "done": true,
+              "createdAt": "2026-07-29T07:29:18.022Z",
+              "updatedAt": "2026-07-31T05:03:17.408Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-29T07:29:23.891Z",
+          "updatedAt": "2026-08-05T07:26:29.308Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-31T05:03:19.616Z"
+        },
+        {
+          "id": "tms5na647z9zvcmo",
+          "title": "Database App - with ServiceNow Ticketing",
+          "description": "Database - with ServiceNow Ticketing",
+          "priority": "medium",
+          "dueDate": "2026-08-07",
+          "status": "daily",
+          "archived": false,
+          "order": 1783592364925,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-29T05:29:12.055Z",
+          "updatedAt": "2026-08-05T06:26:10.816Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tms4p3hcg6tsao4b",
+          "title": "Morpheus - Demo",
+          "description": "Completed the demo for Morpheus",
+          "priority": "high",
+          "dueDate": "2026-07-28",
+          "status": "completed",
+          "archived": true,
+          "order": 1785245533072,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-28T13:32:13.072Z",
+          "updatedAt": "2026-07-30T10:57:42.666Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-28T13:32:13.072Z"
+        },
+        {
+          "id": "tms2rwogfw37s9d9",
+          "title": "Dev-Box - Configure Dashboards and Access Review",
+          "description": "Configure Dashboards and Access Review for Dev-Box",
+          "priority": "medium",
+          "dueDate": "2026-07-28",
+          "status": "completed",
+          "archived": true,
+          "order": 1785245533071,
+          "subtasks": [
+            {
+              "id": "tms2rwbor9akxr8m",
+              "text": "Dashboards",
+              "done": true,
+              "createdAt": "2026-07-27T05:15:05.643Z",
+              "updatedAt": "2026-07-27T07:17:49.494Z"
+            },
+            {
+              "id": "tms2rwhzxgdj8lrd",
+              "text": "Access Review",
+              "done": true,
+              "createdAt": "2026-07-27T05:15:13.821Z",
+              "updatedAt": "2026-07-28T13:30:41.298Z"
+            },
+            {
+              "id": "tms5xuigwkoxsywr",
+              "text": "Demo",
+              "done": true,
+              "createdAt": "2026-07-29T10:24:57.344Z",
+              "updatedAt": "2026-07-29T10:24:59.898Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-27T05:15:22.191Z",
+          "updatedAt": "2026-07-30T10:57:44.142Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-29T10:25:05.470Z"
+        },
+        {
+          "id": "tms2rw07lkgrfar0",
+          "title": "Morpheus - Configure Dashboards and Access Review",
+          "description": "Configure Dashboards and Access Review for Morpheus",
+          "priority": "medium",
+          "dueDate": "2026-07-27",
+          "status": "completed",
+          "archived": true,
+          "order": 1783592762266,
+          "subtasks": [
+            {
+              "id": "tms2rvp7l4xbcoqm",
+              "text": "Dashboards",
+              "done": true,
+              "createdAt": "2026-07-27T05:14:36.513Z",
+              "updatedAt": "2026-07-27T06:54:03.064Z"
+            },
+            {
+              "id": "tms2rvth67gbouir",
+              "text": "Access Review",
+              "done": true,
+              "createdAt": "2026-07-27T05:14:42.042Z",
+              "updatedAt": "2026-07-28T06:35:57.276Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-07-27T05:14:50.769Z",
+          "updatedAt": "2026-07-30T10:57:46.142Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-28T06:36:02.658Z"
+        },
+        {
           "id": "tmrx2wo9v9brobv9",
           "title": "Onboard PowerApps-EGADEV as Separate Application",
           "description": "",
           "priority": "high",
-          "dueDate": "2026-07-23",
-          "status": "inprogress",
-          "archived": false,
-          "order": -1.75,
-          "subtasks": [],
+          "dueDate": "2026-07-24",
+          "status": "completed",
+          "archived": true,
+          "order": 1785474199617,
+          "subtasks": [
+            {
+              "id": "tmrxi0bl6s5mpeyl",
+              "text": "Data Validation with Sreekala",
+              "done": true,
+              "createdAt": "2026-07-23T12:39:25.098Z",
+              "updatedAt": "2026-07-23T12:39:26.332Z"
+            },
+            {
+              "id": "tmryk7vt3z4waqyd",
+              "text": "Work on the Pagination",
+              "done": true,
+              "createdAt": "2026-07-24T06:29:03.303Z",
+              "updatedAt": "2026-07-24T08:00:17.125Z"
+            },
+            {
+              "id": "tmrynhfaci9ybkcb",
+              "text": "Disablement testing in Saviynt",
+              "done": true,
+              "createdAt": "2026-07-24T08:00:27.300Z",
+              "updatedAt": "2026-07-24T08:02:18.016Z"
+            },
+            {
+              "id": "tmrynk4wygvj2nvb",
+              "text": "Enablement testing saviynt",
+              "done": true,
+              "createdAt": "2026-07-24T08:02:33.826Z",
+              "updatedAt": "2026-07-28T13:30:57.458Z"
+            },
+            {
+              "id": "tms4p24qtpj2irqi",
+              "text": "Adding role to the user",
+              "done": true,
+              "createdAt": "2026-07-28T13:31:10.085Z",
+              "updatedAt": "2026-07-28T13:31:20.385Z"
+            },
+            {
+              "id": "tms4p29us3aanynl",
+              "text": "Removing role from the user",
+              "done": true,
+              "createdAt": "2026-07-28T13:31:16.707Z",
+              "updatedAt": "2026-07-28T13:31:20.999Z"
+            },
+            {
+              "id": "tms8h9ln05et4wov",
+              "text": "Demo",
+              "done": true,
+              "createdAt": "2026-07-31T05:04:06.348Z",
+              "updatedAt": "2026-07-31T05:04:08.056Z"
+            }
+          ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-23T05:36:40.675Z",
-          "updatedAt": "2026-07-23T05:36:47.014Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-05T07:26:25.100Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-31T05:04:14.741Z"
         },
         {
           "id": "tmrvna5hn6l1d3cb",
@@ -26,7 +418,7 @@
           "priority": "high",
           "dueDate": "2026-07-22",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762269,
           "subtasks": [
             {
@@ -47,7 +439,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:29.483Z",
-          "updatedAt": "2026-07-22T08:12:11.149Z",
+          "updatedAt": "2026-07-30T10:57:47.355Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-22T08:12:11.149Z"
         },
@@ -58,12 +450,12 @@
           "priority": "medium",
           "dueDate": "2026-07-24",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762268,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-22T05:31:10.709Z",
-          "updatedAt": "2026-07-22T11:01:03.572Z",
+          "updatedAt": "2026-07-30T10:57:54.926Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-22T11:01:03.573Z"
         },
@@ -74,7 +466,7 @@
           "priority": "medium",
           "dueDate": "2026-07-23",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762267,
           "subtasks": [
             {
@@ -85,7 +477,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-21T05:34:25.492Z",
-          "updatedAt": "2026-07-23T05:14:48.610Z",
+          "updatedAt": "2026-07-30T10:57:48.804Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-23T05:14:48.610Z"
         },
@@ -95,15 +487,28 @@
           "description": "Database - Test logintime via query in saviynt",
           "priority": "high",
           "dueDate": "2026-07-23",
-          "status": "inprogress",
-          "archived": false,
-          "order": -3.25,
-          "subtasks": [],
+          "status": "completed",
+          "archived": true,
+          "order": 1783592762269.5,
+          "subtasks": [
+            {
+              "id": "tmrx6op5o95fwyvd",
+              "text": "Call has been competed with DB Team regarding the Custom Role and LoginTime",
+              "done": true,
+              "updatedAt": "2026-07-23T11:21:56.878Z"
+            },
+            {
+              "id": "tmrxetvtmkq3cffi",
+              "text": "DB Team needs to provide the custom role with our service account",
+              "done": true,
+              "updatedAt": "2026-07-23T12:38:50.588Z"
+            }
+          ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:48.268Z",
-          "updatedAt": "2026-07-22T11:01:13.131Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-07-30T10:58:06.973Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-07-23T12:38:57.258Z"
         },
         {
           "id": "tmrswdzgob40q2b0",
@@ -112,7 +517,7 @@
           "priority": "medium",
           "dueDate": "2026-07-21",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1784631589767,
           "subtasks": [
             {
@@ -133,7 +538,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-20T07:23:06.312Z",
-          "updatedAt": "2026-07-21T10:59:49.771Z",
+          "updatedAt": "2026-07-30T10:58:02.824Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-21T10:59:49.767Z"
         },
@@ -143,9 +548,9 @@
           "description": "Wallix Access Review and Delete for Giovani",
           "priority": "medium",
           "dueDate": "2026-07-09",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -2.75,
+          "order": 1785474199615,
           "subtasks": [
             {
               "id": "tmrf2iktbi5vei03",
@@ -170,14 +575,15 @@
             {
               "id": "tmrf2jvvpsy3cdrw",
               "text": "Delete user after disable 90days",
-              "done": true
+              "done": false,
+              "updatedAt": "2026-07-24T08:18:12.137Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:38:37.354Z",
-          "updatedAt": "2026-07-22T11:19:45.019Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-03T07:06:16.828Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-03T07:06:16.828Z"
         },
         {
           "id": "tmrd2n8a1rl0l1r0",
@@ -201,19 +607,21 @@
           "description": "1. Microsoft Exchange Online – Shared Mailbox\n2. Azure DevOps - Krunal is working (API is testing)\n3. SAP DSP - Ticket is raised for lower env\n4. Azure Databricks - Saurabh",
           "priority": "medium",
           "dueDate": "2026-07-24",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1783584332315.5,
+          "order": 0.25,
           "subtasks": [
             {
               "id": "tmrd2obzfjyqvolf",
               "text": "1. Microsoft Exchange Online – Shared Mailbox",
-              "done": false
+              "done": true,
+              "updatedAt": "2026-08-05T08:04:11.182Z"
             },
             {
               "id": "tmrd2ofp0ghglgzu",
               "text": "2. Azure DevOps",
-              "done": true
+              "done": false,
+              "updatedAt": "2026-08-06T05:31:08.669Z"
             },
             {
               "id": "tmrd2ojqh1njuf8d",
@@ -223,12 +631,13 @@
             {
               "id": "tmrd2om620sfludv",
               "text": "4. Azure Databricks",
-              "done": false
+              "done": true,
+              "updatedAt": "2026-08-06T11:35:31.422Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T05:29:16.146Z",
-          "updatedAt": "2026-07-23T05:35:02.197Z",
+          "updatedAt": "2026-08-06T11:35:31.422Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -239,12 +648,12 @@
           "priority": "medium",
           "dueDate": "2026-07-10",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762270.5,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:59:45.430Z",
-          "updatedAt": "2026-07-20T08:56:47.858Z",
+          "updatedAt": "2026-07-30T10:58:14.196Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T08:56:24.984Z"
         },
@@ -255,7 +664,7 @@
           "priority": "medium",
           "dueDate": "2026-07-13",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762271,
           "subtasks": [
             {
@@ -271,7 +680,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:59.798Z",
-          "updatedAt": "2026-07-20T06:16:58.026Z",
+          "updatedAt": "2026-07-23T06:36:19.914Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-20T05:21:35.538Z"
         },
@@ -280,7 +689,7 @@
           "title": "Exchange Online with Who has what access",
           "description": "Exchange Online with Who has what access",
           "priority": "low",
-          "dueDate": "2026-07-29",
+          "dueDate": "2026-07-31",
           "status": "inprogress",
           "archived": false,
           "order": -0.75,
@@ -289,11 +698,18 @@
               "id": "tmrvm6frfcnxhsg4",
               "text": "Need to work on the feedback provided during demo before going to prod",
               "done": false
+            },
+            {
+              "id": "tmsedafxf5cqkznm",
+              "text": "Add the Status of User Account",
+              "done": true,
+              "createdAt": "2026-08-04T07:59:24.195Z",
+              "updatedAt": "2026-08-04T07:59:25.594Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-07-22T05:01:04.500Z",
+          "updatedAt": "2026-08-04T07:59:28.164Z",
           "completedBy": null,
           "completedOn": null
         },
@@ -304,12 +720,12 @@
           "priority": "high",
           "dueDate": "2026-07-09",
           "status": "completed",
-          "archived": false,
+          "archived": true,
           "order": 1783592762270,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-09T10:25:47.337Z",
-          "updatedAt": "2026-07-20T06:16:53.909Z",
+          "updatedAt": "2026-07-30T10:58:11.630Z",
           "completedBy": "Rakesh",
           "completedOn": "2026-07-09T10:26:02.270Z"
         },
@@ -317,25 +733,42 @@
           "id": "tmrespm0jct5hkou",
           "title": "SC2.0 Installation of AT OT for PROD",
           "description": "SC2.0 Installation of AT OT for PROD",
-          "priority": "low",
-          "dueDate": "2026-07-20",
+          "priority": "medium",
+          "dueDate": "2026-07-31",
           "status": "daily",
           "archived": false,
-          "order": 1783679483827,
-          "subtasks": [],
-          "projectId": "tmrstr0zcei7ouzx",
+          "order": 1783592364926,
+          "subtasks": [
+            {
+              "id": "tms5y3z75mm823l1",
+              "text": "Raise the ticket with Saviynt",
+              "done": false,
+              "createdAt": "2026-07-29T10:32:18.929Z",
+              "updatedAt": "2026-07-29T10:32:18.929Z"
+            },
+            {
+              "id": "tms5y489mgeuqzdy",
+              "text": "SC2.0 Installation for DEV",
+              "done": false,
+              "createdAt": "2026-07-29T10:32:30.682Z",
+              "updatedAt": "2026-07-29T10:32:30.682Z"
+            },
+            {
+              "id": "tms5y4dt67cjjkg7",
+              "text": "SC2.0 Installation for PROD - 2 servers",
+              "done": false,
+              "createdAt": "2026-07-29T10:32:37.866Z",
+              "updatedAt": "2026-07-29T10:32:37.866Z"
+            }
+          ],
+          "projectId": null,
           "createdAt": "2026-07-10T10:31:23.827Z",
-          "updatedAt": "2026-07-20T06:16:24.629Z",
+          "updatedAt": "2026-08-04T11:50:35.518Z",
           "completedBy": null,
           "completedOn": null
         }
       ],
       "projects": [
-        {
-          "id": "tmrstqqfdsvsp71g",
-          "name": "SIB",
-          "tasks": []
-        },
         {
           "id": "tmrstr0zcei7ouzx",
           "name": "EGA",
@@ -356,6 +789,11 @@
               "completedOn": null
             }
           ]
+        },
+        {
+          "id": "tmrstqqfdsvsp71g",
+          "name": "SIB",
+          "tasks": []
         },
         {
           "id": "tmrstr6b92dqtwig",
@@ -385,16 +823,44 @@
       ],
       "settings": {
         "theme": "light",
-        "sort": "created_asc",
+        "sort": "manual",
         "priorityFilter": "all",
         "statusFilter": "all",
-        "projectFilter": "all",
-        "userName": "Rakesh"
+        "projectFilter": "all"
       }
     },
     "rajan": {
       "displayName": "Rajan",
-      "tasks": [],
+      "tasks": [
+        {
+          "id": "tmrddf3uv5wwgs4p",
+          "title": "Example: in-progress work",
+          "description": "Tasks here show up in the middle column until they're done.",
+          "priority": "high",
+          "dueDate": "2026-07-11",
+          "status": "inprogress",
+          "archived": false,
+          "order": 1783593133319,
+          "createdAt": "2026-07-09T09:35:33.319Z",
+          "updatedAt": "2026-07-09T10:05:33.319Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
+          "id": "tmrddf3uvspl35lw",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1783593233319,
+          "createdAt": "2026-07-09T07:15:33.319Z",
+          "updatedAt": "2026-07-09T10:25:33.319Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-09T10:25:33.319Z"
+        }
+      ],
       "projects": [],
       "settings": {
         "theme": "light",
@@ -420,6 +886,20 @@
           "updatedAt": "2026-07-11T06:00:57.852Z",
           "completedBy": null,
           "completedOn": null
+        },
+        {
+          "id": "tmrg2s071kvvixax",
+          "title": "Example: a finished task",
+          "description": "Completed tasks keep a permanent record of who finished them and when.",
+          "priority": "low",
+          "dueDate": null,
+          "status": "completed",
+          "archived": false,
+          "order": 1783756757852,
+          "createdAt": "2026-07-11T04:40:57.852Z",
+          "updatedAt": "2026-07-11T07:50:57.852Z",
+          "completedBy": "Flow",
+          "completedOn": "2026-07-11T07:50:57.852Z"
         },
         {
           "id": "tmrg2s0715uzmpgv",
@@ -451,34 +931,6 @@
           "updatedAt": "2026-07-11T06:30:57.852Z",
           "completedBy": null,
           "completedOn": null
-        },
-        {
-          "id": "tmrg2s071wc7agbh",
-          "title": "Example: in-progress work",
-          "description": "Tasks here show up in the middle column until they're done.",
-          "priority": "high",
-          "dueDate": "2026-07-13",
-          "status": "inprogress",
-          "archived": false,
-          "order": 1783756657852,
-          "createdAt": "2026-07-11T07:00:57.852Z",
-          "updatedAt": "2026-07-11T07:30:57.852Z",
-          "completedBy": null,
-          "completedOn": null
-        },
-        {
-          "id": "tmrg2s071kvvixax",
-          "title": "Example: a finished task",
-          "description": "Completed tasks keep a permanent record of who finished them and when.",
-          "priority": "low",
-          "dueDate": null,
-          "status": "completed",
-          "archived": false,
-          "order": 1783756757852,
-          "createdAt": "2026-07-11T04:40:57.852Z",
-          "updatedAt": "2026-07-11T07:50:57.852Z",
-          "completedBy": "Flow",
-          "completedOn": "2026-07-11T07:50:57.852Z"
         }
       ],
       "projects": [],
@@ -486,7 +938,8 @@
         "theme": "light",
         "sort": "manual",
         "priorityFilter": "all",
-        "statusFilter": "all"
+        "statusFilter": "all",
+        "projectFilter": "all"
       }
     }
   }
