@@ -23,9 +23,9 @@
             {
               "id": "tmsfp6qyjy8vtzgi",
               "text": "Set 3 level approvals",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-05T06:20:13.435Z",
-              "updatedAt": "2026-08-05T06:20:13.435Z"
+              "updatedAt": "2026-08-06T09:06:38.444Z"
             },
             {
               "id": "tmsfp6y0o4n2bv2t",
@@ -37,7 +37,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-05T06:20:31.558Z",
-          "updatedAt": "2026-08-05T07:59:08.054Z",
+          "updatedAt": "2026-08-06T09:06:38.444Z",
           "completedBy": null,
           "completedOn": null
         },
