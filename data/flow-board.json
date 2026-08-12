@@ -25,9 +25,9 @@
           "description": "",
           "priority": "high",
           "dueDate": "2026-08-12",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1783592364924,
+          "order": -1.75,
           "subtasks": [
             {
               "id": "tmshamac514vk62t",
@@ -88,7 +88,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-06T09:09:00.835Z",
-          "updatedAt": "2026-08-12T10:19:09.912Z",
+          "updatedAt": "2026-08-12T10:55:57.164Z",
           "completedBy": null,
           "completedOn": null
         },
