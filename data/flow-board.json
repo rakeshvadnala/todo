@@ -25,9 +25,9 @@
           "description": "",
           "priority": "high",
           "dueDate": "2026-08-12",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -1.75,
+          "order": 1785474199614,
           "subtasks": [
             {
               "id": "tmshamac514vk62t",
@@ -88,9 +88,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-06T09:09:00.835Z",
-          "updatedAt": "2026-08-12T10:55:57.164Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-12T12:49:12.824Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-12T12:49:12.824Z"
         },
         {
           "id": "tmsfp74xygd4h15d",
