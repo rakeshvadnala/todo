@@ -706,14 +706,15 @@
           "description": "Exchange Online with Who has what access",
           "priority": "low",
           "dueDate": "2026-07-31",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": -0.75,
+          "order": 1785474199613,
           "subtasks": [
             {
               "id": "tmrvm6frfcnxhsg4",
               "text": "Need to work on the feedback provided during demo before going to prod",
-              "done": false
+              "done": true,
+              "updatedAt": "2026-08-13T05:26:19.263Z"
             },
             {
               "id": "tmsedafxf5cqkznm",
@@ -725,9 +726,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-08T07:58:36.796Z",
-          "updatedAt": "2026-08-04T07:59:28.164Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-08-13T05:26:21.915Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-08-13T05:26:21.915Z"
         },
         {
           "id": "tmrdd2jplnk12zlt",
