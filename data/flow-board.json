@@ -4,6 +4,22 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmsr66ybl9rf07jv",
+          "title": "PowerApps - Cleanup",
+          "description": "Need to discuss with Sreekala, regarding the users without access",
+          "priority": "medium",
+          "dueDate": "2026-08-21",
+          "status": "daily",
+          "archived": false,
+          "order": 1786604504385,
+          "subtasks": [],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-08-13T07:01:44.385Z",
+          "updatedAt": "2026-08-13T07:01:44.385Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmsokdl01et0m7ai",
           "title": "Active Directory Entitlement Owner Import",
           "description": "Active Directory Entitlement Owner Import",
