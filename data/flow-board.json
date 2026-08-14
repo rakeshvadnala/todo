@@ -176,11 +176,25 @@
               "done": false,
               "createdAt": "2026-08-04T07:54:24.903Z",
               "updatedAt": "2026-08-04T07:54:24.903Z"
+            },
+            {
+              "id": "tmsslsh8x4iq2sad",
+              "text": "Initial call with App Team regarding the creation",
+              "done": false,
+              "createdAt": "2026-08-14T07:06:09.105Z",
+              "updatedAt": "2026-08-14T07:06:09.105Z"
+            },
+            {
+              "id": "tmsslsyjeohhasrr",
+              "text": "Ticketing integration for exchange",
+              "done": false,
+              "createdAt": "2026-08-14T07:06:31.514Z",
+              "updatedAt": "2026-08-14T07:06:31.514Z"
             }
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-03T05:20:55.411Z",
-          "updatedAt": "2026-08-04T07:54:28.616Z",
+          "updatedAt": "2026-08-14T07:06:34.788Z",
           "completedBy": null,
           "completedOn": null
         },
