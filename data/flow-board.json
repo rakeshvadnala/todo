@@ -289,9 +289,9 @@
             {
               "id": "tmsslr8x87om3nee",
               "text": "Initial call with ServiceNow Team for SA and catalog",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-14T07:05:11.660Z",
-              "updatedAt": "2026-08-14T07:05:11.660Z"
+              "updatedAt": "2026-08-14T07:05:49.145Z"
             },
             {
               "id": "tmsslrkccqk5b0m4",
@@ -324,7 +324,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T05:29:12.055Z",
-          "updatedAt": "2026-08-14T07:05:44.960Z",
+          "updatedAt": "2026-08-14T07:05:49.145Z",
           "completedBy": null,
           "completedOn": null
         },
