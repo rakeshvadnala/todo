@@ -173,16 +173,16 @@
             {
               "id": "tmsed40zrptcn0qp",
               "text": "Create the Shared Mailbox",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-04T07:54:24.903Z",
-              "updatedAt": "2026-08-04T07:54:24.903Z"
+              "updatedAt": "2026-08-18T12:59:26.887Z"
             },
             {
               "id": "tmsslsh8x4iq2sad",
               "text": "Initial call with App Team regarding the creation",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-14T07:06:09.105Z",
-              "updatedAt": "2026-08-14T07:06:09.105Z"
+              "updatedAt": "2026-08-18T12:59:29.787Z"
             },
             {
               "id": "tmsslsyjeohhasrr",
@@ -194,7 +194,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-03T05:20:55.411Z",
-          "updatedAt": "2026-08-14T07:06:34.788Z",
+          "updatedAt": "2026-08-18T12:59:29.787Z",
           "completedBy": null,
           "completedOn": null
         },
