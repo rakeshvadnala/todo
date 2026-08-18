@@ -158,7 +158,7 @@
           "title": "Microsoft Exchange Online – Shared Mailbox",
           "description": "Microsoft Exchange Online – Shared Mailbox",
           "priority": "medium",
-          "dueDate": "2026-08-07",
+          "dueDate": "2026-08-21",
           "status": "inprogress",
           "archived": false,
           "order": -0.75,
@@ -194,7 +194,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-03T05:20:55.411Z",
-          "updatedAt": "2026-08-18T12:59:29.787Z",
+          "updatedAt": "2026-08-18T12:59:46.329Z",
           "completedBy": null,
           "completedOn": null
         },
