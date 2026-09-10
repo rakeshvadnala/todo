@@ -310,9 +310,9 @@
             {
               "id": "tmsslrkccqk5b0m4",
               "text": "Call to be setup with DB Team for SNOW Catalog",
-              "done": false,
+              "done": true,
               "createdAt": "2026-08-14T07:05:26.460Z",
-              "updatedAt": "2026-08-14T07:05:26.460Z"
+              "updatedAt": "2026-09-10T05:03:21.796Z"
             },
             {
               "id": "tmsslrrgawww2g8j",
@@ -338,7 +338,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-07-29T05:29:12.055Z",
-          "updatedAt": "2026-08-14T07:05:49.145Z",
+          "updatedAt": "2026-09-10T05:03:21.796Z",
           "completedBy": null,
           "completedOn": null
         },
