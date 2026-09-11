@@ -4,6 +4,44 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmtwuc75xumrug8u",
+          "title": "Update the DisableAccountJSON for All AD Applicaitons",
+          "description": "Update the DisableAccountJSON for All AD Applicaitons",
+          "priority": "medium",
+          "dueDate": "2026-09-14",
+          "status": "daily",
+          "archived": false,
+          "order": 1789124173125,
+          "subtasks": [
+            {
+              "id": "tmtwuby5o2dkps3l",
+              "text": "DAI",
+              "done": false,
+              "createdAt": "2026-09-11T10:56:01.450Z",
+              "updatedAt": "2026-09-11T10:56:01.450Z"
+            },
+            {
+              "id": "tmtwuc14uccdbe99",
+              "text": "MFGJA",
+              "done": false,
+              "createdAt": "2026-09-11T10:56:05.310Z",
+              "updatedAt": "2026-09-11T10:56:05.310Z"
+            },
+            {
+              "id": "tmtwuc3n5fseg3vi",
+              "text": "MFGAT",
+              "done": false,
+              "createdAt": "2026-09-11T10:56:08.561Z",
+              "updatedAt": "2026-09-11T10:56:08.561Z"
+            }
+          ],
+          "projectId": "tmrstr0zcei7ouzx",
+          "createdAt": "2026-09-11T10:56:13.125Z",
+          "updatedAt": "2026-09-11T10:56:13.125Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmsr66ybl9rf07jv",
           "title": "PowerApps - Cleanup",
           "description": "Need to discuss with Sreekala, regarding the users without access",
