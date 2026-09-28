@@ -9,9 +9,9 @@
           "description": "PROD Deployment - Exchange Remote",
           "priority": "medium",
           "dueDate": "2026-09-28",
-          "status": "daily",
+          "status": "inprogress",
           "archived": false,
-          "order": 1787785551467,
+          "order": -2.75,
           "subtasks": [
             {
               "id": "tmukzbjbl52uubke",
@@ -44,7 +44,7 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-09-28T08:22:35.645Z",
-          "updatedAt": "2026-09-28T08:22:41.270Z",
+          "updatedAt": "2026-09-28T08:22:47.920Z",
           "completedBy": null,
           "completedOn": null
         },
