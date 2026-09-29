@@ -108,15 +108,15 @@
           "description": "Active Directory Entitlement Owner Import",
           "priority": "medium",
           "dueDate": "2026-09-25",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1786446929809,
+          "order": 1785474199609,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-08-11T11:15:29.809Z",
-          "updatedAt": "2026-09-07T05:09:33.479Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-09-29T05:23:30.274Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-09-29T05:23:30.274Z"
         },
         {
           "id": "tmshannz74e07vyw",
