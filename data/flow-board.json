@@ -92,9 +92,9 @@
           "description": "Update the DisableAccountJSON for All AD Applicaitons",
           "priority": "medium",
           "dueDate": "2026-09-14",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1789124173125,
+          "order": 1785474199605,
           "subtasks": [
             {
               "id": "tmtwuby5o2dkps3l",
@@ -120,9 +120,9 @@
           ],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-09-11T10:56:13.125Z",
-          "updatedAt": "2026-10-08T06:23:57.778Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-10-08T06:24:02.960Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-10-08T06:24:02.960Z"
         },
         {
           "id": "tmsr66ybl9rf07jv",
