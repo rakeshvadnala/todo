@@ -979,11 +979,11 @@
           "dueDate": "2026-10-21",
           "status": "daily",
           "archived": false,
-          "order": 1792412836583,
+          "order": 1783592364925,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-10-19T12:27:16.583Z",
-          "updatedAt": "2026-10-19T12:27:16.587Z",
+          "updatedAt": "2026-10-19T12:37:14.099Z",
           "completedBy": null,
           "completedOn": null
         }
