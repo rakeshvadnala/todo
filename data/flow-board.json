@@ -25,15 +25,15 @@
           "description": "",
           "priority": "medium",
           "dueDate": "2026-10-21",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": 1792559609988,
+          "order": 1792584045867,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-10-21T05:13:29.988Z",
-          "updatedAt": "2026-10-21T05:13:29.988Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-10-21T12:00:48.719Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-10-21T12:00:48.719Z"
         },
         {
           "id": "tmvhnor3spu1h2gj",
@@ -41,15 +41,15 @@
           "description": "",
           "priority": "medium",
           "dueDate": "2026-10-21",
-          "status": "inprogress",
+          "status": "completed",
           "archived": false,
-          "order": 1792559578183,
+          "order": 1792584045868,
           "subtasks": [],
           "projectId": "tmrstr0zcei7ouzx",
           "createdAt": "2026-10-21T05:12:53.560Z",
-          "updatedAt": "2026-10-21T05:12:58.183Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-10-21T12:00:45.868Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-10-21T12:00:45.868Z"
         },
         {
           "id": "tmumn0c45511owr6",
