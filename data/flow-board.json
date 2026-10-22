@@ -4,6 +4,22 @@
       "displayName": "Rakesh",
       "tasks": [
         {
+          "id": "tmvja4vkzp6s41jo",
+          "title": "Delta Aggregation",
+          "description": "",
+          "priority": "medium",
+          "dueDate": "2026-10-23",
+          "status": "daily",
+          "archived": false,
+          "order": 1792657743587,
+          "subtasks": [],
+          "projectId": "tmvja4kcoy1pqtx6",
+          "createdAt": "2026-10-22T08:29:03.588Z",
+          "updatedAt": "2026-10-22T08:29:03.588Z",
+          "completedBy": null,
+          "completedOn": null
+        },
+        {
           "id": "tmvhnqgd2s7vxful",
           "title": "Onboard the PowerBI Application via PowerShell",
           "description": "Onboard the PowerBI Application via PowerShell",
