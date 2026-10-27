@@ -9,15 +9,15 @@
           "description": "",
           "priority": "medium",
           "dueDate": "2026-10-23",
-          "status": "daily",
+          "status": "completed",
           "archived": false,
-          "order": 1792657743587,
+          "order": 1792584045866,
           "subtasks": [],
           "projectId": "tmvja4kcoy1pqtx6",
           "createdAt": "2026-10-22T08:29:03.588Z",
-          "updatedAt": "2026-10-22T08:29:03.588Z",
-          "completedBy": null,
-          "completedOn": null
+          "updatedAt": "2026-10-27T08:40:14.382Z",
+          "completedBy": "Rakesh",
+          "completedOn": "2026-10-27T08:40:14.382Z"
         },
         {
           "id": "tmvhnqgd2s7vxful",
