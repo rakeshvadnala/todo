@@ -1,6 +1,9 @@
 (function(){
 "use strict";
 
+// All persistence goes through the encrypted vault (js/vault.js) — never raw LS.
+const LS = window.FlowStore;
+
 /* ============================================================
    STORAGE LAYER — multi-profile
    All profiles live together in one master object under MASTER_KEY.
@@ -9,17 +12,18 @@
    the entire "login."
    ============================================================ */
 const MASTER_KEY = "flow_todo_master_v1";
+const LAST_USER_KEY = "flow_last_user_v1"; // which profile to reopen on refresh
 const LEGACY_KEY = "flow_todo_data_v1"; // pre-multi-profile single-user storage
 
 function loadMaster(){
   try{
-    const raw = localStorage.getItem(MASTER_KEY);
+    const raw = LS.getItem(MASTER_KEY);
     if(!raw) return null;
     const parsed = JSON.parse(raw);
     if(!parsed || typeof parsed.users !== "object" || parsed.users === null) return null;
     return parsed;
   }catch(e){
-    console.error("Failed to load profile data:", e);
+    console.error("Failed to load profile data:");
     return null;
   }
 }
@@ -33,7 +37,19 @@ function defaultUserData(){
       sort: "manual",
       priorityFilter: "all",
       statusFilter: "all",
-      projectFilter: "all"
+      projectFilter: "all",
+      themeMode: null,        // "light" | "dark" | "system" (null = follow legacy `theme`)
+      accent: "navy",
+      palette: "slate",
+      density: "comfortable", // compact | comfortable | detailed
+      view: "board",          // board | list | calendar | today
+      weeklyGoal: 10,
+      reminders: true,        // daily due/overdue notification — on by default
+      lastReminder: "",
+      columns: null,          // null = default three columns
+      templates: [],
+      remindersSet: false,    // true once the user has chosen explicitly
+      notifyTitles: true      // show task titles inside notifications
     }
   };
 }
@@ -46,7 +62,7 @@ let masterState = loadMaster() || { users: {} };
 (function migrateLegacyIfNeeded(){
   if(Object.keys(masterState.users).length > 0) return;
   try{
-    const legacyRaw = localStorage.getItem(LEGACY_KEY);
+    const legacyRaw = LS.getItem(LEGACY_KEY);
     if(!legacyRaw) return;
     const legacy = JSON.parse(legacyRaw);
     if(!legacy || !Array.isArray(legacy.tasks)) return;
@@ -58,9 +74,9 @@ let masterState = loadMaster() || { users: {} };
       projects: [],
       settings: Object.assign(defaultUserData().settings, legacy.settings || {})
     };
-    localStorage.setItem(MASTER_KEY, JSON.stringify(masterState));
+    LS.setItem(MASTER_KEY, JSON.stringify(masterState));
   }catch(e){
-    console.error("Legacy data migration failed:", e);
+    console.error("Legacy data migration failed:");
   }
 })();
 
@@ -78,9 +94,9 @@ function saveState(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     try{
-      localStorage.setItem(MASTER_KEY, JSON.stringify(masterState));
+      LS.setItem(MASTER_KEY, JSON.stringify(masterState));
     }catch(e){
-      console.error("Auto-save failed:", e);
+      console.error("Auto-save failed:");
       showToast("Couldn't save — storage may be full.", "error");
     }
   }, 60);
@@ -95,16 +111,31 @@ function uid(){
 }
 function nowISO(){ return new Date().toISOString(); }
 
+// ---- Regional settings: UAE (Dubai). Dates read DD Mon YYYY, the working
+// week runs Mon–Fri, and "today" is the Gulf Standard Time (UTC+4) calendar day.
+let LOCALE = "en-AE";
+const TIME_ZONE = "Asia/Dubai";
+let DOW_LABELS = ["Mo","Tu","We","Th","Fr","Sa","Su"];
+// Local YYYY-MM-DD for a Date (toISOString would use UTC and be a day off
+// between midnight and 04:00 in Dubai).
+function localDateStr(d){
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function isoToLocalDay(iso){ return localDateStr(new Date(iso)); }
+// Offset of the 1st of a month in a Monday-first grid.
+function mondayOffset(year, month){ return (new Date(year, month, 1).getDay() + 6) % 7; }
+
 function fmtDate(iso){
   if(!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
+  return d.toLocaleDateString(LOCALE, { timeZone:TIME_ZONE, day:"numeric", month:"short", year:"numeric" });
 }
 function fmtDateTime(iso){
   if(!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { month:"short", day:"numeric" }) + ", " +
-         d.toLocaleTimeString(undefined, { hour:"numeric", minute:"2-digit" });
+  return d.toLocaleDateString(LOCALE, { timeZone:TIME_ZONE, day:"numeric", month:"short" }) + ", " +
+         d.toLocaleTimeString(LOCALE, { timeZone:TIME_ZONE, hour:"numeric", minute:"2-digit" });
 }
 function dueMeta(dueStr){
   if(!dueStr) return null;
@@ -128,6 +159,151 @@ function debounce(fn, ms){
 
 const PRIORITY_RANK = { high:3, medium:2, low:1 };
 
+
+/* ============================================================
+   TASK MODEL EXTRAS — activity log, time tracking, recurrence
+   ============================================================ */
+const listeners = {};
+function on(name, fn){ (listeners[name] = listeners[name] || []).push(fn); }
+function emit(name, data){ (listeners[name] || []).forEach(fn=>{ try{ fn(data); }catch(e){ console.error("Listener error"); } }); }
+
+function logActivity(t, text, type){
+  if(!t) return;
+  t.activity = Array.isArray(t.activity) ? t.activity : [];
+  t.activity.push({ id: uid(), at: nowISO(), by: currentDisplayName || "Me", type: type || "event", text });
+  if(t.activity.length > 100) t.activity.splice(0, t.activity.length - 100);
+}
+
+function fmtDuration(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  if(h) return `${h}h ${String(m).padStart(2,"0")}m`;
+  if(m) return `${m}m ${String(s).padStart(2,"0")}s`;
+  return `${s}s`;
+}
+function taskElapsed(t){
+  let sec = t.timeSpent || 0;
+  if(t.timerStart) sec += (Date.now() - new Date(t.timerStart).getTime())/1000;
+  return sec;
+}
+function stopTimer(t, silent){
+  if(!t || !t.timerStart) return;
+  const sec = Math.max(0, Math.round((Date.now() - new Date(t.timerStart).getTime())/1000));
+  t.timeSpent = (t.timeSpent || 0) + sec;
+  t.timeLog = Array.isArray(t.timeLog) ? t.timeLog : [];
+  t.timeLog.push({ at: nowISO(), sec });
+  if(t.timeLog.length > 200) t.timeLog.splice(0, t.timeLog.length - 200);
+  t.timerStart = null;
+  t.updatedAt = nowISO();
+  if(!silent) logActivity(t, `Stopped timer (+${fmtDuration(sec)})`);
+}
+function toggleTimer(id){
+  const t = findTask(id);
+  if(!t) return;
+  if(t.timerStart){
+    stopTimer(t);
+  } else {
+    state.tasks.forEach(o=>{ if(o.timerStart) stopTimer(o); }); // one running timer at a time
+    t.timerStart = nowISO();
+    t.updatedAt = nowISO();
+    logActivity(t, "Started timer");
+  }
+  saveState();
+  renderBoard();
+}
+setInterval(()=>{
+  if(!state) return;
+  document.querySelectorAll("[data-timer-id]").forEach(el=>{
+    const t = findTask(el.dataset.timerId);
+    if(t) el.textContent = fmtDuration(taskElapsed(t));
+  });
+}, 1000);
+
+// Recurrence follows the UAE working week: "weekdays" = Mon–Fri.
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate() + n); return x; }
+function nextOccurrence(dueStr, rule){
+  const today = new Date(); today.setHours(0,0,0,0);
+  let base = dueStr ? new Date(dueStr + "T00:00:00") : new Date(today);
+  if(base < today) base = new Date(today);
+  let next;
+  if(rule === "daily"){ next = addDays(base, 1); }
+  else if(rule === "weekdays"){
+    next = addDays(base, 1);
+    while(next.getDay() === 0 || next.getDay() === 6) next = addDays(next, 1);
+  }
+  else if(rule === "weekly"){ next = addDays(base, 7); }
+  else if(rule === "monthly"){
+    next = new Date(base.getFullYear(), base.getMonth() + 1, 1);
+    const dim = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+    next.setDate(Math.min(base.getDate(), dim));
+  } else return null;
+  return localDateStr(next);
+}
+const RECUR_LABELS = { none:"Doesn't repeat", daily:"Every day", weekdays:"Every weekday (Mon–Fri)", weekly:"Every week", monthly:"Every month" };
+
+function spawnRecurrence(t){
+  const due = nextOccurrence(t.dueDate, t.recur);
+  if(!due) return null;
+  const n = {
+    id: uid(), title: t.title, description: t.description || "", priority: t.priority,
+    dueDate: due, status: firstColumnKey(), archived: false, order: Date.now(),
+    subtasks: (t.subtasks || []).map(s=>({ ...s, id: uid(), done:false, createdAt: nowISO(), updatedAt: nowISO() })),
+    projectId: t.projectId || null, recur: t.recur,
+    createdAt: nowISO(), updatedAt: nowISO(), completedBy: null, completedOn: null
+  };
+  logActivity(n, `Created by repeat (${RECUR_LABELS[t.recur].toLowerCase()})`);
+  state.tasks.unshift(n);
+  t.recurSpawnedId = n.id;
+  return n;
+}
+
+// Central hook: called after any code path changed a task's status. Returns an
+// undo function so the existing "Undo" toasts can also reverse side effects.
+function onStatusChange(t, prev){
+  logActivity(t, `Moved ${colLabel(prev)} → ${colLabel(t.status)}`);
+  let spawned = null;
+  if(t.status === "completed"){
+    if(t.timerStart) stopTimer(t, true);
+    const alreadyThere = t.recurSpawnedId && state.tasks.some(x=>x.id === t.recurSpawnedId);
+    if(t.recur && t.recur !== "none" && !alreadyThere){
+      spawned = spawnRecurrence(t);
+      if(spawned) showToast(`Repeats — next one is due ${fmtDate(spawned.dueDate + "T00:00:00")}`, "success");
+    }
+  }
+  emit("status", { task: t, prev });
+  return function undo(){
+    if(spawned){
+      state.tasks = state.tasks.filter(x=>x.id !== spawned.id);
+      t.recurSpawnedId = null;
+    }
+  };
+}
+
+// Single place that builds a task, so the modal, quick add, templates and CSV import agree.
+function createTask(f){
+  const status = getColumns().some(c=>c.key === f.status) ? f.status : firstColumnKey();
+  const t = {
+    id: uid(),
+    title: String(f.title || "").trim().slice(0,120),
+    description: (f.description || "").trim().slice(0,1000),
+    priority: ["low","medium","high"].includes(f.priority) ? f.priority : "medium",
+    dueDate: f.dueDate || null,
+    status, archived: false,
+    order: Date.now() + Math.floor(Math.random()*1000),
+    subtasks: (f.subtasks || []).map(x => typeof x === "string"
+      ? { id: uid(), text: x.slice(0,200), done:false, createdAt: nowISO(), updatedAt: nowISO() }
+      : x),
+    projectId: f.projectId || null,
+    recur: f.recur && f.recur !== "none" ? f.recur : null,
+    createdAt: nowISO(), updatedAt: nowISO(), completedBy: null, completedOn: null
+  };
+  if(f.timeSpent) t.timeSpent = f.timeSpent;
+  if(status === "completed"){ t.completedBy = currentDisplayName || "Me"; t.completedOn = nowISO(); }
+  logActivity(t, "Created");
+  state.tasks.unshift(t);
+  return t;
+}
+
 /* ============================================================
    TOASTS
    ============================================================ */
@@ -144,10 +320,11 @@ function showToast(msg, type, actionLabel, actionFn){
     el.appendChild(btn);
   }
   wrap.appendChild(el);
+  // Toasts with an action (Undo) stay longer so keyboard/screen-reader users have time to reach them.
   setTimeout(()=>{
     el.style.animation = "toast-out .2s ease forwards";
     setTimeout(()=>el.remove(), 200);
-  }, 3600);
+  }, actionLabel ? 8000 : 3600);
 }
 
 /* ============================================================
@@ -157,7 +334,7 @@ function avatarColor(key){
   let hash = 0;
   for(let i=0; i<key.length; i++){ hash = key.charCodeAt(i) + ((hash << 5) - hash); }
   const hue = Math.abs(hash) % 360;
-  return `hsl(${hue} 68% 50%)`;
+  return `hsl(${hue} 32% 38%)`;
 }
 
 function normalizeKey(name){ return name.trim().toLowerCase(); }
@@ -174,25 +351,76 @@ function renderProfileList(){
     const count = (u.tasks || []).filter(t=>!t.archived).length;
     const displayName = u.displayName || k;
     const initial = displayName.trim().charAt(0).toUpperCase() || "?";
-    return `<button type="button" class="profile-card" data-key="${escapeHtml(k)}">
-      <span class="profile-avatar" style="background:${avatarColor(k)}">${escapeHtml(initial)}</span>
-      <span class="profile-info">
-        <span class="profile-name">${escapeHtml(displayName)}</span>
-        <span class="profile-meta">${count} active task${count===1?"":"s"}</span>
-      </span>
-    </button>`;
+    return `<div class="profile-item">
+      <button type="button" class="profile-card" data-key="${escapeHtml(k)}">
+        <span class="profile-avatar" style="background:${avatarColor(k)}">${escapeHtml(initial)}</span>
+        <span class="profile-info">
+          <span class="profile-name">${escapeHtml(displayName)}</span>
+          <span class="profile-meta">${count} active task${count===1?"":"s"}</span>
+        </span>
+      </button>
+      <button type="button" class="icon-btn profile-delete" data-key="${escapeHtml(k)}" title="Delete profile" aria-label="Delete profile ${escapeHtml(displayName)}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+    </div>`;
   }).join("");
   list.querySelectorAll(".profile-card").forEach(btn=>{
     btn.addEventListener("click", ()=> selectProfile(btn.dataset.key));
   });
+  list.querySelectorAll(".profile-delete").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{ e.stopPropagation(); confirmDeleteProfile(btn.dataset.key); });
+  });
 }
 
-function selectProfile(key){
+// Deleting a profile removes ALL of its data (tasks, archive, projects, settings)
+// from this browser and, if GitHub sync is on, from the synced file. A tombstone
+// is kept so a later pull/merge can't bring the profile back from another device.
+let pendingDeleteProfileKey = null;
+function confirmDeleteProfile(key, pinOk){
+  const u = masterState.users[key];
+  if(!u) return;
+  pendingDeleteProfileKey = key;
+  pendingDeleteId = null;
+  pendingBulkDeleteIds = null;
+  document.getElementById("confirmText").innerHTML =
+    `Delete profile <b>"${escapeHtml(u.displayName || key)}"</b> and all of its tasks, archive and projects? This permanently erases the data and can't be undone.`;
+  openOverlay("confirmModalOverlay");
+}
+function deleteProfile(key){
+  const u = masterState.users[key];
+  if(!u) return;
+  const name = u.displayName || key;
+  clearTimeout(saveTimer);
+  delete masterState.users[key];
+  try{ if(LS.getItem(LAST_USER_KEY) === key) LS.removeItem(LAST_USER_KEY); }catch(e){}
+  masterState.deleted = masterState.deleted || {};
+  masterState.deleted[key] = nowISO();
+  if(Object.keys(masterState.users).length === 0){
+    try{ LS.removeItem(LEGACY_KEY); }catch(e){}
+  }
+  persistMasterLocally();
+  scheduleGithubPush();
+  if(key === currentUserKey){
+    currentUserKey = null;
+    currentDisplayName = "";
+    state = null;
+    document.getElementById("board").innerHTML = "";
+    document.getElementById("profileChipName").textContent = "";
+    document.getElementById("profileChipAvatar").textContent = "";
+  }
+  emit("profile-deleted", { key, name });
+  renderProfileList();
+  document.getElementById("profileCancelBtn").style.display = currentUserKey ? "" : "none";
+  showToast(`Deleted profile "${name}"`, "success");
+}
+
+function selectProfile(key, opts){
   const u = masterState.users[key];
   if(!u) return;
   currentUserKey = key;
   currentDisplayName = u.displayName || key;
   state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
+  if(!state.settings.remindersSet) state.settings.reminders = true;
   finishProfileSelection();
 }
 
@@ -211,7 +439,7 @@ function registerProfile(rawName){
     selectProfile(key);
     return;
   }
-  masterState.users[key] = Object.assign({ displayName }, defaultUserData());
+  masterState.users[key] = Object.assign({ displayName, createdAt: nowISO() }, defaultUserData());
   currentUserKey = key;
   currentDisplayName = displayName;
   state = masterState.users[key];
@@ -223,10 +451,21 @@ function registerProfile(rawName){
 function finishProfileSelection(){
   document.getElementById("newUsernameInput").value = "";
   closeOverlay("profileModalOverlay");
-  applyTheme();
+  applyPrefs();
   syncToolbarToSettings();
+  renderColumnSelects();
   renderBoard();
   updateProfileChip();
+  try{ LS.setItem(LAST_USER_KEY, currentUserKey); }catch(e){}
+  emit("profile", { key: currentUserKey });
+}
+
+// Reopen whoever was using the board last, so a refresh doesn't ask again.
+// (A PIN-protected profile still asks for its PIN.)
+function autoLogin(){
+  let key = null;
+  try{ key = LS.getItem(LAST_USER_KEY); }catch(e){}
+  if(key && masterState.users[key] && !currentUserKey) selectProfile(key);
 }
 
 function updateProfileChip(){
@@ -270,7 +509,7 @@ const SYNC_CONFIG_KEY = "flow_gh_sync_config_v1";
 
 function loadSyncConfig(){
   try{
-    const raw = localStorage.getItem(SYNC_CONFIG_KEY);
+    const raw = LS.getItem(SYNC_CONFIG_KEY);
     if(!raw) return null;
     const parsed = JSON.parse(raw);
     if(!parsed || !parsed.owner || !parsed.repo || !parsed.token) return null;
@@ -278,11 +517,11 @@ function loadSyncConfig(){
   }catch(e){ return null; }
 }
 function saveSyncConfig(cfg){
-  try{ localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg)); }
-  catch(e){ console.error("Failed to save sync config:", e); }
+  try{ LS.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg)); }
+  catch(e){ console.error("Failed to save sync config:"); }
 }
 function clearSyncConfig(){
-  try{ localStorage.removeItem(SYNC_CONFIG_KEY); }catch(e){}
+  try{ LS.removeItem(SYNC_CONFIG_KEY); }catch(e){}
 }
 
 let syncConfig = loadSyncConfig();
@@ -327,11 +566,22 @@ function setSyncStatus(mode, text){
 // push hits a stale-SHA conflict, or on startup when both local and remote
 // data exist and might have diverged.
 function mergeMasterStates(local, remote){
-  const merged = { users: {} };
+  const merged = { users: {}, deleted: {} };
+  [local.deleted, remote.deleted].forEach(d=>{
+    Object.entries(d || {}).forEach(([k, ts])=>{
+      if(!merged.deleted[k] || ts > merged.deleted[k]) merged.deleted[k] = ts;
+    });
+  });
   const allKeys = new Set([...Object.keys(local.users || {}), ...Object.keys(remote.users || {})]);
   allKeys.forEach(key=>{
     const l = local.users[key];
     const r = remote.users[key];
+    // A profile deleted on any device stays deleted, unless it was re-created afterwards.
+    const tomb = merged.deleted[key];
+    if(tomb){
+      const born = [l, r].map(u => u && u.createdAt ? u.createdAt : "").sort().pop();
+      if(!born || born <= tomb) return;
+    }
     if(l && !r){ merged.users[key] = l; return; }
     if(r && !l){ merged.users[key] = r; return; }
     // present in both — merge task-by-task on id, newer updatedAt wins
@@ -380,7 +630,17 @@ async function pullFromGitHub(opts){
     }
     const data = await res.json();
     lastKnownSha = data.sha;
-    const remote = JSON.parse(base64ToUtf8(data.content));
+    let remote;
+    try{
+      remote = await window.FlowVault.decryptRemote(base64ToUtf8(data.content));
+    }catch(err){
+      if(err && err.legacyPlaintext){ remote = err.value; }     // old unencrypted file: read once, re-pushed encrypted
+      else if(err && err.code === "DIFFERENT_VAULT"){
+        setSyncStatus("error", "The GitHub file was encrypted with a different vault.");
+        if(!opts.silent) showToast("Can't decrypt the GitHub file — it belongs to a different vault. Restore it from the lock screen.", "error");
+        return;
+      } else throw new Error("Malformed remote data");
+    }
     if(!remote || typeof remote.users !== "object") throw new Error("Malformed remote data");
 
     masterState = mergeMasterStates(masterState, remote);
@@ -392,21 +652,26 @@ async function pullFromGitHub(opts){
       state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
       renderBoard();
     }
+    if(currentUserKey && !masterState.users[currentUserKey]){
+      currentUserKey = null; currentDisplayName = ""; state = null;
+      document.getElementById("board").innerHTML = "";
+      openProfileSwitcher();
+    }
     if(document.getElementById("profileModalOverlay").classList.contains("open")){
       renderProfileList();
     }
     setSyncStatus("synced", "Synced just now.");
     if(!opts.silent) showToast("Pulled latest data from GitHub", "success");
   }catch(e){
-    console.error("GitHub pull failed:", e);
+    console.error("GitHub pull failed:");
     setSyncStatus("error", "Pull failed — see console for details.");
     if(!opts.silent) showToast("Pull failed — check your connection and settings.", "error");
   }
 }
 
 function persistMasterLocally(){
-  try{ localStorage.setItem(MASTER_KEY, JSON.stringify(masterState)); }
-  catch(e){ console.error("Local save during sync failed:", e); }
+  try{ LS.setItem(MASTER_KEY, JSON.stringify(masterState)); }
+  catch(e){ console.error("Local save during sync failed:"); }
 }
 
 async function pushToGitHub(opts, isRetry){
@@ -418,7 +683,7 @@ async function pushToGitHub(opts, isRetry){
   try{
     const body = {
       message: `Update board data — ${new Date().toISOString()}`,
-      content: utf8ToBase64(JSON.stringify(masterState, null, 2)),
+      content: utf8ToBase64(await window.FlowVault.encryptRemote(masterState)),
       branch: syncConfig.branch || "main"
     };
     if(lastKnownSha) body.sha = lastKnownSha;
@@ -447,7 +712,7 @@ async function pushToGitHub(opts, isRetry){
     setSyncStatus("synced", "Synced just now.");
     if(!opts.silent) showToast("Synced to GitHub", "success");
   }catch(e){
-    console.error("GitHub push failed:", e);
+    console.error("GitHub push failed:");
     setSyncStatus("error", "Sync failed — check your connection.");
     if(!opts.silent) showToast("Sync failed — check your connection and settings.", "error");
   }finally{
@@ -673,11 +938,47 @@ document.getElementById("newProjectNameInput").addEventListener("keydown", (e)=>
 /* ============================================================
    RENDER: BOARD
    ============================================================ */
-const COLUMNS = [
+const DEFAULT_COLUMNS = [
   { key:"daily", label:"Daily", dot:"daily" },
   { key:"inprogress", label:"In Progress", dot:"inprogress" },
   { key:"completed", label:"Completed", dot:"completed" }
 ];
+// Columns are per-profile. "completed" is the permanent done column; the rest can be
+// renamed, reordered, added and removed from Settings.
+function getColumns(){
+  const c = state && state.settings && state.settings.columns;
+  return Array.isArray(c) && c.length ? c : DEFAULT_COLUMNS;
+}
+function colByKey(key){ return getColumns().find(c=>c.key === key); }
+function colLabel(key){ const c = colByKey(key); return c ? c.label : key; }
+function firstColumnKey(){ return getColumns()[0].key; }
+function setColumns(cols){
+  const valid = new Set(cols.map(c=>c.key));
+  const fallback = cols[0].key;
+  state.tasks.forEach(t=>{ if(!valid.has(t.status)){ t.status = fallback; t.updatedAt = nowISO(); } });
+  state.settings.columns = cols;
+  if(state.settings.statusFilter !== "all" && !valid.has(state.settings.statusFilter)) state.settings.statusFilter = "all";
+  saveState();
+  renderColumnSelects();
+  renderBoard();
+}
+// Rebuild the <select>s that list columns (filter, bulk move, task modal).
+function renderColumnSelects(){
+  const cols = getColumns();
+  const fill = (id, head)=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = (head ? `<option value="${head[0]}">${escapeHtml(head[1])}</option>` : "") +
+      cols.map(c=>`<option value="${escapeHtml(c.key)}">${escapeHtml(c.label)}</option>`).join("");
+    if([...sel.options].some(o=>o.value === cur)) sel.value = cur;
+    const inst = window.customSelectRegistry && window.customSelectRegistry[id];
+    if(inst) inst.refresh();
+  };
+  fill("statusFilterSelect", ["all","All columns"]);
+  fill("bulkMoveSelect", ["","Move to…"]);
+  fill("statusInput", null);
+}
 
 const boardEl = document.getElementById("board");
 const searchInput = document.getElementById("searchInput");
@@ -775,6 +1076,7 @@ function cardHTML(t){
       <input type="checkbox" class="bulk-select-checkbox" data-id="${t.id}" ${isSelected ? "checked" : ""}>
     </label>` : ""}
     <div class="card-top">
+      ${checkButtonHTML(t)}
       <div class="card-title">${escapeHtml(t.title)}</div>
       <span class="pri-chip priority-${t.priority}">${t.priority}</span>
     </div>
@@ -782,11 +1084,12 @@ function cardHTML(t){
     ${t.description ? `<div class="card-desc">${escapeHtml(t.description)}</div>` : ""}
     <div class="card-meta">
       ${due ? `<span class="meta-item due-chip ${due.cls}">${escapeHtml(due.label)}</span>` : ""}
-      <span class="meta-item" title="Created">
+      ${cardExtrasHTML(t)}
+      <span class="meta-item meta-created" title="Created">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
         ${fmtDateTime(t.createdAt)}
       </span>
-      ${t.updatedAt !== t.createdAt ? `<span class="meta-item" title="Last updated">
+      ${t.updatedAt !== t.createdAt ? `<span class="meta-item meta-updated" title="Last updated">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
         ${fmtDateTime(t.updatedAt)}
       </span>` : ""}
@@ -821,6 +1124,12 @@ function updateOverallProgress(totalActive){
   const statsEl = document.getElementById("opStats");
 
   fillEl.style.width = pct + "%";
+  const track = fillEl.parentElement;
+  track.setAttribute("role", "progressbar");
+  track.setAttribute("aria-label", "Overall completion");
+  track.setAttribute("aria-valuemin", "0");
+  track.setAttribute("aria-valuemax", "100");
+  track.setAttribute("aria-valuenow", String(pct));
   fillEl.classList.toggle("complete", isComplete);
   pctEl.classList.toggle("complete", isComplete);
   pctEl.textContent = pct + "%";
@@ -829,9 +1138,246 @@ function updateOverallProgress(totalActive){
     : `${doneCount} of ${totalActive} task${totalActive===1?"":"s"} completed`;
 }
 
+
+const ICON = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  repeat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+};
+const RECUR_SHORT = { daily:"Daily", weekdays:"Weekdays", weekly:"Weekly", monthly:"Monthly" };
+
+function checkButtonHTML(t){
+  const done = t.status === "completed";
+  const label = done ? "Mark as not done" : "Mark as done";
+  return `<button type="button" class="card-check${done ? " checked" : ""}" data-id="${t.id}" role="checkbox" aria-checked="${done}" aria-label="${label}" title="${label}">${ICON.check}</button>`;
+}
+function timerHTML(t){
+  const done = t.status === "completed";
+  const running = !!t.timerStart;
+  const total = taskElapsed(t);
+  if(done && !total) return "";
+  if(done) return `<span class="meta-item time-static" title="Time tracked">${fmtDuration(total)}</span>`;
+  return `<button type="button" class="meta-item timer-btn${running ? " running" : ""}${!running && !total ? " idle" : ""}" data-id="${t.id}" title="${running ? "Stop timer" : "Start timer"}" aria-label="${running ? "Stop timer" : "Start timer"}">${running ? ICON.pause : ICON.play}<span data-timer-id="${t.id}">${fmtDuration(total)}</span></button>`;
+}
+function cardExtrasHTML(t){
+  const comments = (t.activity || []).filter(a=>a.type === "comment").length;
+  return (t.recur && RECUR_SHORT[t.recur]
+      ? `<span class="meta-item recur-badge" title="${escapeHtml(RECUR_LABELS[t.recur])}">${ICON.repeat}${RECUR_SHORT[t.recur]}</span>` : "") +
+    timerHTML(t) +
+    (comments ? `<span class="meta-item" title="Comments">${ICON.comment}${comments}</span>` : "");
+}
+
+/* ============================================================
+   VIEWS — board (default), list, calendar, today
+   ============================================================ */
+const VIEWS = ["board","list","calendar","today"];
+let viewCalY = new Date().getFullYear(), viewCalM = new Date().getMonth();
+
+function noResultsHTML(msg){
+  return `<div class="no-results"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>${escapeHtml(msg)}</span></div>`;
+}
+
+function listRowHTML(t){
+  const due = dueMeta(t.dueDate);
+  const proj = t.projectId ? findProject(t.projectId) : null;
+  const done = t.status === "completed";
+  return `<div class="list-row priority-${t.priority}${done ? " done" : ""}" data-id="${t.id}" tabindex="0" role="row">
+    <div class="lr-check">${checkButtonHTML(t)}</div>
+    <div class="lr-title">
+      <span class="lr-name">${escapeHtml(t.title)}</span>
+      ${proj ? `<span class="project-chip" style="--proj-color:${projectColor(proj.id)}">${escapeHtml(proj.name)}</span>` : ""}
+      ${t.recur && RECUR_SHORT[t.recur] ? `<span class="meta-item recur-badge">${ICON.repeat}${RECUR_SHORT[t.recur]}</span>` : ""}
+    </div>
+    <div class="lr-pri"><span class="pri-chip priority-${t.priority}">${t.priority}</span></div>
+    <div class="lr-col">${escapeHtml(colLabel(t.status))}</div>
+    <div class="lr-due">${due ? `<span class="due-chip ${due.cls}">${escapeHtml(due.label.replace(/^Due /,""))}</span>` : `<span class="lr-none">—</span>`}</div>
+    <div class="lr-time">${timerHTML(t) || `<span class="lr-none">—</span>`}</div>
+    <div class="lr-actions">
+      <button type="button" class="icon-btn edit-btn" data-id="${t.id}" title="Edit" aria-label="Edit ${escapeHtml(t.title)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+      <button type="button" class="icon-btn delete-btn" data-id="${t.id}" title="Delete" aria-label="Delete ${escapeHtml(t.title)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+    </div>
+  </div>`;
+}
+function renderListView(visible){
+  const rows = sortTasks(visible);
+  if(!rows.length){ boardEl.innerHTML = noResultsHTML("No tasks match your filters."); return; }
+  boardEl.innerHTML = `<div class="list-wrap" role="table">
+    <div class="list-head" role="row"><span></span><span>Task</span><span>Priority</span><span>Column</span><span>Due</span><span>Time</span><span></span></div>
+    ${rows.map(listRowHTML).join("")}
+  </div>`;
+  boardEl.querySelectorAll(".list-row").forEach(row=>{
+    row.addEventListener("click", (e)=>{
+      if(e.target.closest("button")) return;
+      openTaskModal(row.dataset.id);
+    });
+    row.addEventListener("keydown", (e)=>{
+      if(e.target !== row) return;
+      if(e.key === "Enter") openTaskModal(row.dataset.id);
+      if(e.key === "Delete") confirmDeleteTask(row.dataset.id);
+    });
+  });
+}
+
+function renderTodayView(visible){
+  const todayStr = localDateStr(new Date());
+  const active = visible.filter(t=>t.status !== "completed");
+  const overdue = active.filter(t=>t.dueDate && t.dueDate < todayStr);
+  const dueToday = active.filter(t=>t.dueDate === todayStr);
+  const used = new Set([...overdue, ...dueToday].map(t=>t.id));
+  const doing = active.filter(t=>!used.has(t.id) && t.status !== firstColumnKey());
+  const doneToday = visible.filter(t=>t.status === "completed" && t.completedOn && isoToLocalDay(t.completedOn) === todayStr);
+  const groups = [
+    { label:"Overdue", tasks: sortTasks(overdue), color:"var(--high)" },
+    { label:"Due today", tasks: sortTasks(dueToday), color:"var(--med)" },
+    { label:"In progress", tasks: sortTasks(doing), color:"var(--col-daily)" },
+    { label:"Done today", tasks: sortTasks(doneToday), color:"var(--low)" }
+  ].filter(g=>g.tasks.length);
+  if(!groups.length){ boardEl.innerHTML = noResultsHTML("Nothing is due today. Enjoy the quiet."); return; }
+  boardEl.innerHTML = groups.map(g=>`
+    <section class="column today-group">
+      <div class="column-head">
+        <span class="col-dot" style="background:${g.color}"></span>
+        <span class="column-title">${g.label}</span>
+        <span class="column-count">${g.tasks.length}</span>
+      </div>
+      <div class="column-progress"></div>
+      <div class="tasklist">${g.tasks.map(cardHTML).join("")}</div>
+    </section>`).join("");
+}
+
+function renderCalendarView(visible){
+  const pad = n => String(n).padStart(2,"0");
+  const y = viewCalY, m = viewCalM;
+  const dim = new Date(y, m + 1, 0).getDate();
+  const todayStr = localDateStr(new Date());
+  const byDay = {};
+  const unscheduled = [];
+  visible.forEach(t=>{
+    if(!t.dueDate){ if(t.status !== "completed") unscheduled.push(t); return; }
+    (byDay[t.dueDate] = byDay[t.dueDate] || []).push(t);
+  });
+  const chip = t => `<button type="button" class="cv-chip priority-${t.priority}${t.status === "completed" ? " done" : ""}" data-id="${t.id}" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</button>`;
+  let cells = "";
+  for(let i=0;i<mondayOffset(y,m);i++) cells += `<div class="cv-cell empty"></div>`;
+  for(let d=1; d<=dim; d++){
+    const ds = `${y}-${pad(m+1)}-${pad(d)}`;
+    const list = sortTasks(byDay[ds] || []);
+    const shown = list.slice(0,3);
+    cells += `<div class="cv-cell${ds === todayStr ? " today" : ""}" data-date="${ds}" tabindex="0" role="button" aria-label="Add a task due ${ds}">
+      <span class="cv-day">${d}</span>
+      ${shown.map(chip).join("")}
+      ${list.length > 3 ? `<span class="cv-more">+${list.length - 3} more</span>` : ""}
+    </div>`;
+  }
+  const monthLabel = new Date(y, m, 1).toLocaleDateString(LOCALE, { month:"long", year:"numeric" });
+  boardEl.innerHTML = `<div class="cv">
+    <div class="cv-head">
+      <button type="button" class="icon-btn" id="vcPrev" title="Previous month" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <h2 class="cv-title">${monthLabel}</h2>
+      <button type="button" class="icon-btn" id="vcNext" title="Next month" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      <button type="button" class="btn ghost" id="vcToday">Today</button>
+    </div>
+    <div class="cv-grid cv-dow">${DOW_LABELS.map(d=>`<div>${d}</div>`).join("")}</div>
+    <div class="cv-grid cv-body">${cells}</div>
+    ${unscheduled.length ? `<div class="cv-unscheduled"><b>No due date</b> ${sortTasks(unscheduled).map(chip).join("")}</div>` : ""}
+  </div>`;
+  const shift = n => { const d = new Date(y, m + n, 1); viewCalY = d.getFullYear(); viewCalM = d.getMonth(); renderBoard(); };
+  document.getElementById("vcPrev").onclick = ()=>shift(-1);
+  document.getElementById("vcNext").onclick = ()=>shift(1);
+  document.getElementById("vcToday").onclick = ()=>{ viewCalY = new Date().getFullYear(); viewCalM = new Date().getMonth(); renderBoard(); };
+  boardEl.querySelectorAll(".cv-chip").forEach(b=> b.addEventListener("click", (e)=>{ e.stopPropagation(); openTaskModal(b.dataset.id); }));
+  boardEl.querySelectorAll(".cv-cell[data-date]").forEach(c=>{
+    c.addEventListener("click", (e)=>{
+      if(e.target.closest(".cv-chip")) return;
+      openTaskModal(null, null, c.dataset.date);
+    });
+    c.addEventListener("keydown", (e)=>{
+      if(e.target === c && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); openTaskModal(null, null, c.dataset.date); }
+    });
+  });
+}
+
+function renderProjectTabs(){
+  const wrap = document.querySelector("#projectTabs .ptabs-list");
+  if(!wrap) return;
+  const cur = state.settings.projectFilter || "all";
+  const act = state.tasks.filter(t=>!t.archived);
+  const none = act.filter(t=>!t.projectId).length;
+  const projects = sortedProjects();
+  const tab = (val, label, n, color)=>`<button type="button" class="ptab${cur === val ? " active" : ""}" aria-pressed="${cur === val}" data-project="${escapeHtml(val)}">${color ? `<i class="ptab-dot" style="background:${color}"></i>` : ""}${escapeHtml(label)}<span class="ptab-n">${n}</span></button>`;
+  wrap.innerHTML = tab("all","All",act.length) +
+    (none && projects.length ? tab("none","No project",none) : "") +
+    projects.map(p=>tab(p.id, p.name, act.filter(t=>t.projectId === p.id).length, projectColor(p.id))).join("");
+}
+document.getElementById("projectTabs").addEventListener("click", (e)=>{
+  const b = e.target.closest(".ptab");
+  if(!b || !state) return;
+  state.settings.projectFilter = b.dataset.project;
+  const sel = document.getElementById("projectFilterSelect");
+  if(sel){ sel.value = b.dataset.project; const inst = window.customSelectRegistry && window.customSelectRegistry.projectFilterSelect; if(inst) inst.refresh(); }
+  saveState();
+  renderBoard();
+});
+
+function updateViewControls(){
+  const v = state.settings.view || "board";
+  document.querySelectorAll("#viewSeg button").forEach(b=>{
+    const on = b.dataset.view === v;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
+  const sel = document.getElementById("bulkSelectToggleBtn");
+  if(sel) sel.style.display = (v === "board" || v === "today") ? "" : "none";
+  const dens = state.settings.density || "comfortable";
+  ["compact","comfortable","detailed"].forEach(d=>document.body.classList.toggle("density-" + d, d === dens));
+  const db = document.getElementById("densityBtn");
+  if(db){ db.title = "Card density: " + dens; db.setAttribute("aria-label", "Card density: " + dens); db.dataset.density = dens; }
+}
+function setView(v){
+  if(!VIEWS.includes(v) || !state) return;
+  if(selectMode && (v === "list" || v === "calendar")) exitSelectMode();
+  state.settings.view = v;
+  saveState();
+  renderBoard();
+}
+function cycleDensity(){
+  const order = ["compact","comfortable","detailed"];
+  const cur = state.settings.density || "comfortable";
+  state.settings.density = order[(order.indexOf(cur) + 1) % order.length];
+  saveState();
+  renderBoard();
+  showToast("Card density: " + state.settings.density, "success");
+}
+document.getElementById("viewSeg").addEventListener("click", (e)=>{
+  const b = e.target.closest("button[data-view]");
+  if(b) setView(b.dataset.view);
+});
+document.getElementById("densityBtn").addEventListener("click", ()=>{ if(state) cycleDensity(); });
+
 function renderBoard(){
   const visible = getVisibleTasks();
   const q = searchInput.value.trim();
+  const view = state.settings.view || "board";
+  document.body.dataset.view = view;
+  boardEl.className = "board view-" + view;
+  renderProjectTabs();
+  updateViewControls();
+
+  if(view !== "board"){
+    const totalActive = state.tasks.filter(t=>!t.archived).length;
+    updateOverallProgress(totalActive);
+    if(view === "list") renderListView(visible);
+    else if(view === "calendar") renderCalendarView(visible);
+    else renderTodayView(visible);
+    resultCountEl.textContent = q || state.settings.priorityFilter !== "all"
+      ? `${visible.length} task${visible.length===1?"":"s"} shown`
+      : `${totalActive} active tasks`;
+    attachCardListeners();
+    emit("render");
+    return;
+  }
 
   boardEl.innerHTML = "";
   let totalShown = 0;
@@ -839,7 +1385,7 @@ function renderBoard(){
   const totalActive = state.tasks.filter(t=>!t.archived).length;
   updateOverallProgress(totalActive);
   const sf = state.settings.statusFilter;
-  const columnsToRender = sf === "all" ? COLUMNS : COLUMNS.filter(c=>c.key === sf);
+  const columnsToRender = sf === "all" ? getColumns() : getColumns().filter(c=>c.key === sf);
   boardEl.classList.toggle("single-col", sf !== "all");
 
   columnsToRender.forEach(col=>{
@@ -853,14 +1399,14 @@ function renderBoard(){
     colEl.dataset.status = col.key;
     colEl.innerHTML = `
       <div class="column-head">
-        <span class="col-dot ${col.dot}"></span>
-        <span class="column-title">${col.label}</span>
+        <span class="col-dot ${col.dot || ""}"${col.color ? ` style="background:${col.color}"` : ""}></span>
+        <span class="column-title">${escapeHtml(col.label)}</span>
         <span class="column-count">${allInStatus}</span>
       </div>
       <div class="column-progress" title="${shareOfBoard}% of active tasks"><div style="width:${shareOfBoard}%"></div></div>
       <div class="tasklist" data-status="${col.key}">
         ${colTasks.length ? colTasks.map(cardHTML).join("") : (q ? "" : emptyColHTML())}
-        ${colTasks.length === 0 && q ? `<div class="empty-col"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>No matches in ${col.label}.</span></div>` : ""}
+        ${colTasks.length === 0 && q ? `<div class="empty-col"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>No matches in ${escapeHtml(col.label)}.</span></div>` : ""}
       </div>
     `;
     boardEl.appendChild(colEl);
@@ -872,6 +1418,7 @@ function renderBoard(){
 
   attachCardListeners();
   attachDnD();
+  emit("render");
 }
 
 /* ============================================================
@@ -890,6 +1437,11 @@ function attachCardListeners(){
   document.querySelectorAll(".card").forEach(card=>{
     card.addEventListener("dblclick", ()=>{ if(!selectMode) openTaskModal(card.dataset.id); });
     card.addEventListener("keydown", (e)=>{
+      if(e.altKey && e.key.startsWith("Arrow") && document.body.dataset.view === "board"){
+        e.preventDefault();
+        keyboardMove(card.dataset.id, e.key);
+        return;
+      }
       if(selectMode){
         if(e.key === "Enter"){ e.preventDefault(); toggleCardSelection(card.dataset.id); }
         return;
@@ -907,6 +1459,17 @@ function attachCardListeners(){
   document.querySelectorAll(".bulk-select-checkbox").forEach(cb=>{
     cb.addEventListener("click", (e)=> e.stopPropagation());
     cb.addEventListener("change", ()=> toggleCardSelection(cb.dataset.id));
+  });
+  document.querySelectorAll(".card-check").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const t = findTask(btn.dataset.id);
+      if(!t) return;
+      moveTaskToStatus(t.id, t.status === "completed" ? firstColumnKey() : "completed");
+    });
+  });
+  document.querySelectorAll(".timer-btn").forEach(btn=>{
+    btn.addEventListener("click", (e)=>{ e.stopPropagation(); toggleTimer(btn.dataset.id); });
   });
   document.querySelectorAll(".subtask-summary").forEach(btn=>{
     btn.addEventListener("click", (e)=>{
@@ -934,6 +1497,37 @@ function attachCardListeners(){
 
 function findTask(id){ return state.tasks.find(t=>t.id === id); }
 
+// Keyboard alternative to dragging: Alt+←/→ moves a card between columns,
+// Alt+↑/↓ reorders it inside its column (needs "Board order" sorting).
+function keyboardMove(id, key){
+  const t = findTask(id);
+  if(!t) return;
+  const refocus = ()=>requestAnimationFrame(()=>{ const el = document.querySelector(`.card[data-id="${id}"]`); if(el) el.focus(); });
+  if(key === "ArrowLeft" || key === "ArrowRight"){
+    const keys = [...document.querySelectorAll(".column")].map(c=>c.dataset.status);
+    
+    const step = key === "ArrowRight" ? 1 : -1;
+    const target = keys[keys.indexOf(t.status) + step];
+    if(!target){ showToast("No column in that direction", "error"); return; }
+    moveTaskToStatus(id, target);
+    refocus();
+  } else if(key === "ArrowUp" || key === "ArrowDown"){
+    if(state.settings.sort !== "manual"){ showToast('Set sorting to "Board order" to reorder cards', "error"); return; }
+    const list = sortTasks(getVisibleTasks().filter(x=>x.status === t.status));
+    const i = list.indexOf(t), j = i + (key === "ArrowUp" ? -1 : 1);
+    if(j < 0 || j >= list.length) return;
+    const other = list[j];
+    let a = t.order ?? 0, b = other.order ?? 0;
+    if(a === b) b = a + (key === "ArrowUp" ? -1 : 1);
+    t.order = b; other.order = a;
+    t.updatedAt = nowISO();
+    saveState();
+    renderBoard();
+    refocus();
+  }
+}
+
+
 function moveTaskToStatus(id, newStatus){
   const t = findTask(id);
   if(!t || t.status === newStatus) return;
@@ -949,10 +1543,12 @@ function moveTaskToStatus(id, newStatus){
     t.completedBy = null;
     t.completedOn = null;
   }
+  const undoFx = onStatusChange(t, prevStatus);
   saveState();
   renderBoard();
-  const label = COLUMNS.find(c=>c.key===newStatus).label;
+  const label = colLabel(newStatus);
   showToast(`Moved "${t.title}" to ${label}`, "success", "Undo", ()=>{
+    undoFx();
     t.status = prevStatus; t.order = prevOrder;
     if(prevStatus !== "completed"){ t.completedBy=null; t.completedOn=null; }
     saveState(); renderBoard();
@@ -981,12 +1577,14 @@ function dropTaskAt(id, newStatus, newOrder){
       t.completedOn = null;
     }
   }
+  const undoFx = statusChanged ? onStatusChange(t, prevStatus) : function(){};
   saveState();
   renderBoard();
 
   if(statusChanged){
-    const label = COLUMNS.find(c=>c.key===newStatus).label;
+    const label = colLabel(newStatus);
     showToast(`Moved "${t.title}" to ${label}`, "success", "Undo", ()=>{
+      undoFx();
       t.status = prevStatus; t.order = prevOrder;
       if(prevStatus !== "completed"){ t.completedBy=null; t.completedOn=null; }
       saveState(); renderBoard();
@@ -1033,8 +1631,15 @@ function confirmBulkDelete(ids){
   document.getElementById("confirmText").innerHTML = `Delete <b>${ids.length} task${ids.length===1?"":"s"}</b>? This can't be undone.`;
   openOverlay("confirmModalOverlay");
 }
-document.getElementById("confirmCancelBtn").addEventListener("click", ()=>{ pendingDeleteId=null; pendingBulkDeleteIds=null; closeOverlay("confirmModalOverlay"); });
+document.getElementById("confirmCancelBtn").addEventListener("click", ()=>{ pendingDeleteProfileKey=null; pendingDeleteId=null; pendingBulkDeleteIds=null; closeOverlay("confirmModalOverlay"); });
 document.getElementById("confirmOkBtn").addEventListener("click", ()=>{
+  if(pendingDeleteProfileKey){
+    const k = pendingDeleteProfileKey;
+    pendingDeleteProfileKey = null;
+    closeOverlay("confirmModalOverlay");
+    deleteProfile(k);
+    return;
+  }
   if(pendingBulkDeleteIds){
     const removed = [];
     const removedAt = [];
@@ -1113,6 +1718,7 @@ function bulkMoveTo(newStatus){
   ids.forEach(id=>{
     const t = findTask(id);
     if(!t || t.status === newStatus) return;
+    const prevS = t.status;
     t.status = newStatus;
     t.order = Date.now() + movedCount; // keeps the batch's relative order, lands at the end
     t.updatedAt = nowISO();
@@ -1123,11 +1729,12 @@ function bulkMoveTo(newStatus){
       t.completedBy = null;
       t.completedOn = null;
     }
+    onStatusChange(t, prevS);
     movedCount++;
   });
   if(movedCount > 0){
     saveState();
-    const label = COLUMNS.find(c=>c.key===newStatus).label;
+    const label = colLabel(newStatus);
     showToast(`Moved ${movedCount} task${movedCount===1?"":"s"} to ${label}`, "success");
   }
   exitSelectMode();
@@ -1437,7 +2044,7 @@ document.getElementById("subtaskInput").addEventListener("keydown", (e)=>{
   }
 });
 
-function openTaskModal(id, presetStatus){
+function openTaskModal(id, presetStatus, presetDue){
   editingId = id || null;
   const t = id ? findTask(id) : null;
 
@@ -1446,8 +2053,11 @@ function openTaskModal(id, presetStatus){
 
   titleInput.value = t ? t.title : "";
   descInput.value = t ? (t.description || "") : "";
-  dueInput.value = t ? (t.dueDate || "") : "";
-  statusInput.value = t ? t.status : (presetStatus || "daily");
+  dueInput.value = t ? (t.dueDate || "") : (presetDue || "");
+  setSelectValue("statusInput", t ? t.status : (presetStatus || firstColumnKey()));
+  setSelectValue("recurInput", t && t.recur ? t.recur : "none");
+  document.getElementById("templateRow").style.display = t ? "none" : "";
+  renderTemplateSelect();
   currentPriority = t ? t.priority : "medium";
   [...priSelect.children].forEach(c=>c.classList.toggle("active", c.dataset.val === currentPriority));
 
@@ -1462,60 +2072,127 @@ function openTaskModal(id, presetStatus){
     metaReadout.innerHTML = `
       <span>Created: <b>${fmtDateTime(t.createdAt)}</b></span>
       <span>Updated: <b>${fmtDateTime(t.updatedAt)}</b></span>
+      ${taskElapsed(t) ? `<span>Time tracked: <b>${fmtDuration(taskElapsed(t))}</b></span>` : ""}
       ${t.status==="completed" ? `<span>Completed by: <b>${escapeHtml(t.completedBy||"—")}</b> on <b>${fmtDateTime(t.completedOn)}</b></span>` : ""}
     `;
   } else {
     metaReadout.style.display = "none";
   }
 
+  renderActivity(t);
   openOverlay("taskModalOverlay");
   setTimeout(()=>titleInput.focus(), 60);
 }
+
+function setSelectValue(id, val){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.value = val;
+  const inst = window.customSelectRegistry && window.customSelectRegistry[id];
+  if(inst) inst.refresh();
+}
+
+/* ---------- Templates ---------- */
+function renderTemplateSelect(){
+  const sel = document.getElementById("templateSelect");
+  const list = (state.settings.templates || []);
+  sel.innerHTML = `<option value="">Start from a template…</option>` +
+    list.map(tp=>`<option value="${escapeHtml(tp.id)}">${escapeHtml(tp.name)}</option>`).join("");
+  setSelectValue("templateSelect", "");
+  document.getElementById("templateRow").classList.toggle("no-templates", list.length === 0);
+}
+function applyTemplate(id){
+  const tp = (state.settings.templates || []).find(x=>x.id === id);
+  if(!tp) return;
+  titleInput.value = tp.title || "";
+  descInput.value = tp.description || "";
+  currentPriority = tp.priority || "medium";
+  [...priSelect.children].forEach(c=>c.classList.toggle("active", c.dataset.val === currentPriority));
+  currentSubtasks = (tp.subtasks || []).map(x=>({ id: uid(), text: x, done:false, createdAt: nowISO(), updatedAt: nowISO() }));
+  renderSubtaskEditor();
+  setSelectValue("recurInput", tp.recur || "none");
+  titleInput.focus();
+}
+document.getElementById("templateSelect").addEventListener("change", (e)=>{ if(e.target.value) applyTemplate(e.target.value); });
+document.getElementById("saveTemplateBtn").addEventListener("click", ()=>{
+  const title = titleInput.value.trim();
+  if(!title){ titleInput.focus(); showToast("Add a title first, then save it as a template", "error"); return; }
+  state.settings.templates = state.settings.templates || [];
+  state.settings.templates.push({
+    id: uid(), name: title.slice(0,60), title, description: descInput.value.trim(), priority: currentPriority,
+    subtasks: currentSubtasks.map(x=>x.text), recur: document.getElementById("recurInput").value || "none"
+  });
+  saveState();
+  renderTemplateSelect();
+  showToast(`Saved template "${title}"`, "success");
+});
+
+/* ---------- Activity & comments (inside the task modal) ---------- */
+function renderActivity(t){
+  const field = document.getElementById("activityField");
+  const list = document.getElementById("activityList");
+  field.style.display = t ? "" : "none";
+  if(!t){ list.innerHTML = ""; return; }
+  const items = (t.activity || []).slice().reverse().slice(0, 40);
+  list.innerHTML = items.length ? items.map(a=>`
+    <li class="act-item ${a.type === "comment" ? "comment" : ""}">
+      <div class="act-meta"><b>${escapeHtml(a.by || "")}</b> · ${fmtDateTime(a.at)}</div>
+      <div class="act-text">${escapeHtml(a.text)}</div>
+    </li>`).join("") : `<li class="act-empty">No activity yet.</li>`;
+}
+function postComment(){
+  const input = document.getElementById("commentInput");
+  const text = input.value.trim();
+  if(!text || !editingId) return;
+  const t = findTask(editingId);
+  if(!t) return;
+  logActivity(t, text.slice(0,500), "comment");
+  t.updatedAt = nowISO();
+  input.value = "";
+  saveState();
+  renderActivity(t);
+  renderBoard();
+}
+document.getElementById("commentAddBtn").addEventListener("click", postComment);
+document.getElementById("commentInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){ e.preventDefault(); postComment(); }
+});
 
 taskForm.addEventListener("submit", (e)=>{
   e.preventDefault();
   const title = titleInput.value.trim();
   if(!title) return;
   const projectId = document.getElementById("projectInput").value || null;
+  const recur = document.getElementById("recurInput").value || "none";
 
   if(editingId){
     const t = findTask(editingId);
+    const changes = [];
+    if(t.title !== title) changes.push("title");
+    if(t.priority !== currentPriority) changes.push(`priority → ${currentPriority}`);
+    if((t.dueDate || null) !== (dueInput.value || null)) changes.push(`due date → ${dueInput.value ? fmtDate(dueInput.value + "T00:00:00") : "none"}`);
+    if((t.recur || "none") !== recur) changes.push(`repeat → ${RECUR_LABELS[recur].toLowerCase()}`);
     t.title = title;
     t.description = descInput.value.trim();
     t.priority = currentPriority;
     t.dueDate = dueInput.value || null;
+    t.recur = recur === "none" ? null : recur;
     t.subtasks = currentSubtasks;
     t.projectId = projectId;
+    if(changes.length) logActivity(t, "Changed " + changes.join(", "));
     const newStatus = statusInput.value;
     if(newStatus !== t.status){
-      moveTaskToStatus(t.id, newStatus); // handles completedBy/On + toast
+      moveTaskToStatus(t.id, newStatus); // handles completedBy/On + activity + toast
     }
     t.updatedAt = nowISO();
     saveState();
     renderBoard();
     showToast(`Saved "${t.title}"`, "success");
   } else {
-    const newTask = {
-      id: uid(),
-      title,
-      description: descInput.value.trim(),
-      priority: currentPriority,
-      dueDate: dueInput.value || null,
-      status: statusInput.value,
-      archived: false,
-      order: Date.now(),
-      subtasks: currentSubtasks,
-      projectId: projectId,
-      createdAt: nowISO(),
-      updatedAt: nowISO(),
-      completedBy: null,
-      completedOn: null
-    };
-    if(newTask.status === "completed"){
-      newTask.completedBy = currentDisplayName || "Me";
-      newTask.completedOn = nowISO();
-    }
-    state.tasks.unshift(newTask);
+    const newTask = createTask({
+      title, description: descInput.value, priority: currentPriority, dueDate: dueInput.value || null,
+      status: statusInput.value, subtasks: currentSubtasks, projectId, recur
+    });
     saveState();
     renderBoard();
     showToast(`Added "${newTask.title}"`, "success");
@@ -1646,12 +2323,12 @@ function renderInsights(){
   for(let i = 6; i >= 0; i--){
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const dateStr = d.toISOString().slice(0, 10);
-    const dayLabel = d.toLocaleDateString(undefined, { weekday: "short" });
+    const dateStr = localDateStr(d);
+    const dayLabel = d.toLocaleDateString(LOCALE, { weekday: "short" });
     const isToday = i === 0;
 
     const count = completed.filter(t => {
-      const cDate = t.completedOn ? t.completedOn.slice(0, 10) : (t.updatedAt ? t.updatedAt.slice(0, 10) : "");
+      const cDate = t.completedOn ? isoToLocalDay(t.completedOn) : (t.updatedAt ? isoToLocalDay(t.updatedAt) : "");
       return cDate === dateStr;
     }).length;
 
@@ -1721,18 +2398,14 @@ function renderInsights(){
         <div class="insights-panel">
           <h3>Status Breakdown <span>Distribution across columns</span></h3>
           <div class="breakdown-list">
-            <div class="breakdown-item">
-              <div class="breakdown-head"><span>Daily</span><b>${daily.length} (${totalActive ? Math.round((daily.length/totalActive)*100) : 0}%)</b></div>
-              <div class="breakdown-track"><div class="breakdown-fill daily" style="width:${totalActive ? Math.round((daily.length/totalActive)*100) : 0}%"></div></div>
-            </div>
-            <div class="breakdown-item">
-              <div class="breakdown-head"><span>In progress</span><b>${inProgress.length} (${totalActive ? Math.round((inProgress.length/totalActive)*100) : 0}%)</b></div>
-              <div class="breakdown-track"><div class="breakdown-fill inprogress" style="width:${totalActive ? Math.round((inProgress.length/totalActive)*100) : 0}%"></div></div>
-            </div>
-            <div class="breakdown-item">
-              <div class="breakdown-head"><span>Completed</span><b>${completed.length} (${completionRate}%)</b></div>
-              <div class="breakdown-track"><div class="breakdown-fill completed" style="width:${completionRate}%"></div></div>
-            </div>
+            ${getColumns().map(c=>{
+              const n = all.filter(t=>t.status === c.key).length;
+              const pct = totalActive ? Math.round((n/totalActive)*100) : 0;
+              return `<div class="breakdown-item">
+              <div class="breakdown-head"><span>${escapeHtml(c.label)}</span><b>${n} (${pct}%)</b></div>
+              <div class="breakdown-track"><div class="breakdown-fill ${c.dot || ""}" style="width:${pct}%;${c.color ? `background:${c.color}` : ""}"></div></div>
+            </div>`;
+            }).join("")}
           </div>
         </div>
 
@@ -1779,10 +2452,10 @@ function renderInsights(){
 function calendarPanelHTML(all){
   const year = insightsCalYear, month = insightsCalMonth;
   const pad = n => String(n).padStart(2, "0");
-  const monthLabel = new Date(year, month, 1).toLocaleDateString(undefined, { month: "long" });
-  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const monthLabel = new Date(year, month, 1).toLocaleDateString(LOCALE, { month: "long" });
+  const firstDayOfWeek = mondayOffset(year, month);
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = localDateStr(new Date());
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
 
   const dayStats = {};
@@ -1791,7 +2464,7 @@ function calendarPanelHTML(all){
   }
   all.forEach(t=>{
     if(t.completedOn){
-      const cDate = t.completedOn.slice(0, 10);
+      const cDate = isoToLocalDay(t.completedOn);
       if(dayStats[cDate]) dayStats[cDate].completed.push(t);
     }
     if(t.dueDate && dayStats[t.dueDate] && t.status !== "completed"){
@@ -1820,8 +2493,8 @@ function calendarPanelHTML(all){
   maxYear = Math.max(maxYear, year);
   minYear = Math.min(minYear, year);
 
-  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  const dowLabels = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+  const monthNames = Array.from({length:12}, (_,i)=> new Date(2000, i, 1).toLocaleDateString(LOCALE, { month:"long" }));
+  const dowLabels = DOW_LABELS;
 
   let cells = "";
   for(let i = 0; i < firstDayOfWeek; i++) cells += `<div class="cal-cell empty"></div>`;
@@ -1920,9 +2593,9 @@ function attachCalendarListeners(all){
 function showCalDayDetail(dateStr, all){
   const detail = document.getElementById("calDayDetail");
   if(!detail) return;
-  const completedTasks = all.filter(t => t.completedOn && t.completedOn.slice(0,10) === dateStr);
+  const completedTasks = all.filter(t => t.completedOn && isoToLocalDay(t.completedOn) === dateStr);
   const dueTasks = all.filter(t => t.dueDate === dateStr && t.status !== "completed");
-  const label = new Date(dateStr + "T00:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+  const label = new Date(dateStr + "T00:00:00").toLocaleDateString(LOCALE, { weekday: "long", day: "numeric", month: "long" });
 
   detail.style.display = "block";
   detail.innerHTML = `
@@ -1957,7 +2630,7 @@ function exportData(){
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const stamp = new Date().toISOString().slice(0,10);
+  const stamp = localDateStr(new Date());
   a.href = url;
   a.download = `flow-tasks-${stamp}.json`;
   document.body.appendChild(a);
@@ -1974,6 +2647,11 @@ importFileInput.addEventListener("change", (e)=>{
   if(!file) return;
   const reader = new FileReader();
   reader.onload = (evt)=>{
+    if(/\.csv$/i.test(file.name) || file.type === "text/csv"){
+      if(window.FlowCsv) window.FlowCsv.importText(evt.target.result);
+      importFileInput.value = "";
+      return;
+    }
     try{
       const data = JSON.parse(evt.target.result);
       const incoming = Array.isArray(data) ? data : data.tasks;
@@ -2001,7 +2679,7 @@ importFileInput.addEventListener("change", (e)=>{
           description: raw.description ? String(raw.description).slice(0,1000) : "",
           priority: ["low","medium","high"].includes(raw.priority) ? raw.priority : "medium",
           dueDate: raw.dueDate || null,
-          status: ["daily","inprogress","completed"].includes(raw.status) ? raw.status : "daily",
+          status: getColumns().some(c=>c.key === raw.status) ? raw.status : firstColumnKey(),
           archived: !!raw.archived,
           order: typeof raw.order === "number" ? raw.order : (importBase + (importOffset++)),
           subtasks: Array.isArray(raw.subtasks)
@@ -2019,7 +2697,11 @@ importFileInput.addEventListener("change", (e)=>{
           createdAt: raw.createdAt || nowISO(),
           updatedAt: raw.updatedAt || nowISO(),
           completedBy: raw.completedBy || null,
-          completedOn: raw.completedOn || null
+          completedOn: raw.completedOn || null,
+          recur: RECUR_LABELS[raw.recur] && raw.recur !== "none" ? raw.recur : null,
+          timeSpent: Number(raw.timeSpent) || 0,
+          timeLog: Array.isArray(raw.timeLog) ? raw.timeLog.slice(-200) : [],
+          activity: Array.isArray(raw.activity) ? raw.activity.slice(-100) : []
         };
         existingIds.add(task.id);
         state.tasks.push(task);
@@ -2030,7 +2712,7 @@ importFileInput.addEventListener("change", (e)=>{
       renderProjectFilterSelect();
       showToast(`Imported ${added} task${added===1?"":"s"}${skipped?`, skipped ${skipped}`:""}`, "success");
     }catch(err){
-      console.error(err);
+      console.error("Unexpected error");
       showToast("Import failed — invalid JSON file.", "error");
     }
     importFileInput.value = "";
@@ -2041,11 +2723,34 @@ importFileInput.addEventListener("change", (e)=>{
 /* ============================================================
    THEME
    ============================================================ */
+function effectiveTheme(){
+  const m = (state && (state.settings.themeMode || state.settings.theme)) || "dark";
+  if(m === "system") return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  return m === "light" ? "light" : "dark";
+}
 function applyTheme(){
-  document.body.setAttribute("data-theme", state.settings.theme);
+  const th = effectiveTheme();
+  document.body.setAttribute("data-theme", th);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", th === "dark" ? "#0E131A" : "#F3F5F8");
+}
+// Everything per-profile that affects how the app looks.
+function applyPrefs(){
+  applyTheme();
+  document.body.dataset.palette = state.settings.palette || "slate";
+  document.body.dataset.accent = (state.settings.accent === "teal" ? "navy" : state.settings.accent) || "navy";
+  ["compact","comfortable","detailed"].forEach(d=>document.body.classList.toggle("density-" + d, d === (state.settings.density || "comfortable")));
+  emit("prefs");
+}
+if(window.matchMedia){
+  matchMedia("(prefers-color-scheme: light)").addEventListener("change", ()=>{
+    if(state && state.settings.themeMode === "system") applyTheme();
+  });
 }
 document.getElementById("themeBtn").addEventListener("click", ()=>{
-  state.settings.theme = state.settings.theme === "dark" ? "light" : "dark";
+  const next = effectiveTheme() === "dark" ? "light" : "dark";
+  state.settings.themeMode = next;
+  state.settings.theme = next;
   applyTheme();
   saveState();
 });
@@ -2103,7 +2808,10 @@ window.addEventListener("keydown", (e)=>{
   }
   if(typing) return;
 
-  if(e.key === "n" || e.key === "N"){ openTaskModal(null); }
+  if((e.ctrlKey || e.metaKey) || e.altKey) { /* modifier combos are handled elsewhere */ }
+  else if(e.key === "n" || e.key === "N"){ openTaskModal(null); }
+  else if(e.key === "q" || e.key === "Q"){ e.preventDefault(); emit("focus-quickadd"); }
+  else if(["1","2","3","4"].includes(e.key)){ setView(VIEWS[Number(e.key) - 1]); }
   if(e.key === "t" || e.key === "T"){ document.getElementById("themeBtn").click(); }
   if(e.key === "?"){ openOverlay("shortcutsModalOverlay"); }
   if((e.ctrlKey || e.metaKey) && (e.key === "e" || e.key === "E")){ e.preventDefault(); exportData(); }
@@ -2134,7 +2842,7 @@ function seedIfEmpty(){
     },
     {
       id: uid(), title:"Example: in-progress work", description:"Tasks here show up in the middle column until they're done.",
-      priority:"high", dueDate: new Date(Date.now()+2*86400000).toISOString().slice(0,10), status:"inprogress", archived:false, order: t0 - 200000,
+      priority:"high", dueDate: localDateStr(new Date(Date.now()+2*86400000)), status:"inprogress", archived:false, order: t0 - 200000,
       createdAt: mk(60), updatedAt: mk(30), completedBy:null, completedOn:null
     },
     {
@@ -2186,7 +2894,8 @@ function init(){
           if(currentUserKey && masterState.users[currentUserKey]){
             const u = masterState.users[currentUserKey];
             state = { tasks: u.tasks || [], projects: u.projects || [], settings: Object.assign(defaultUserData().settings, u.settings || {}) };
-            applyTheme();
+            applyPrefs();
+            renderColumnSelects();
             renderBoard();
           }
         }
@@ -2202,6 +2911,23 @@ function init(){
     }
   });
 }
+
+window.FLOW_LOCALE = LOCALE;
+window.FLOW_DOW = DOW_LABELS;
+
+window.Flow = {
+  get state(){ return state; },
+  get master(){ return masterState; },
+  get userKey(){ return currentUserKey; },
+  get displayName(){ return currentDisplayName; },
+  get locale(){ return LOCALE; },
+  on, emit, saveState, persistMasterLocally, renderBoard, openOverlay, closeOverlay, showToast,
+  findTask, createTask, uid, nowISO, localDateStr, isoToLocalDay, escapeHtml, fmtDate, fmtDateTime, fmtDuration,
+  taskElapsed, openTaskModal, addProject, sortedProjects, findProject, renderProjectFilterSelect, selectProfile,
+  getColumns, setColumns, colLabel, firstColumnKey, setView, cycleDensity, applyPrefs, applyTheme, effectiveTheme,
+  autoLogin, openProfileSwitcher, exportData, defaultUserData, RECUR_LABELS, nextOccurrence,
+  getVisibleTasks, toggleTimer, normalizeKey
+};
 
 init();
 

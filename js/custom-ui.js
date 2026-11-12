@@ -9,9 +9,16 @@ class CustomSelect {
     
     this.trigger = document.createElement('div');
     this.trigger.className = 'custom-select-trigger';
+    this.trigger.tabIndex = 0;
+    this.trigger.setAttribute('role', 'combobox');
+    this.trigger.setAttribute('aria-haspopup', 'listbox');
+    this.trigger.setAttribute('aria-expanded', 'false');
+    const lbl = this.select.id && document.querySelector(`label[for="${this.select.id}"]`);
+    if (lbl) this.trigger.setAttribute('aria-label', lbl.textContent.trim());
     
     this.optionsContainer = document.createElement('div');
     this.optionsContainer.className = 'custom-select-options';
+    this.optionsContainer.setAttribute('role', 'listbox');
     
     this.wrapper.appendChild(this.trigger);
     this.wrapper.appendChild(this.optionsContainer);
@@ -39,6 +46,27 @@ class CustomSelect {
       }
     });
 
+    // Keyboard: Enter/Space/Arrows open and move, Esc closes.
+    this.trigger.addEventListener('keydown', (e) => {
+      const open = this.wrapper.classList.contains('open');
+      const step = (d) => {
+        const n = this.select.options.length;
+        this.select.selectedIndex = Math.min(n - 1, Math.max(0, this.select.selectedIndex + d));
+        this.select.dispatchEvent(new Event('change'));
+      };
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault(); e.stopPropagation();
+        this.wrapper.classList.toggle('open', !open);
+      } else if (e.key === 'Escape' && open) {
+        e.stopPropagation();
+        this.wrapper.classList.remove('open');
+      } else if (e.key === 'ArrowDown') { e.preventDefault(); step(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
+    });
+    new MutationObserver(() => {
+      this.trigger.setAttribute('aria-expanded', String(this.wrapper.classList.contains('open')));
+    }).observe(this.wrapper, { attributes: true, attributeFilter: ['class'] });
+
     this.select.addEventListener('change', () => {
       this.updateTrigger();
       this.buildOptions(); 
@@ -60,6 +88,8 @@ class CustomSelect {
     this.options.forEach((option, index) => {
       const optEl = document.createElement('div');
       optEl.className = 'custom-option';
+      optEl.setAttribute('role', 'option');
+      optEl.setAttribute('aria-selected', String(this.select.selectedIndex === index));
       if (this.select.selectedIndex === index) optEl.classList.add('selected');
       optEl.textContent = option.textContent;
       optEl.addEventListener('click', (e) => {
@@ -176,10 +206,10 @@ class CustomDatePicker {
   }
   
   renderCalendar() {
-    this.monthDisplay.textContent = this.currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+    this.monthDisplay.textContent = this.currentDate.toLocaleString(window.FLOW_LOCALE || 'en-AE', { month: 'long', year: 'numeric' });
     this.daysGrid.innerHTML = '';
     
-    const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const daysOfWeek = window.FLOW_DOW || ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
     daysOfWeek.forEach(d => {
       const el = document.createElement('div');
       el.className = 'date-day-name';
@@ -189,7 +219,7 @@ class CustomDatePicker {
     
     const year = this.currentDate.getFullYear();
     const month = this.currentDate.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
+    const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
     
@@ -235,12 +265,20 @@ class CustomDatePicker {
 
 // Initialize custom components
 document.addEventListener('DOMContentLoaded', () => {
-  const selects = ['statusFilterSelect', 'sortSelect', 'statusInput', 'projectFilterSelect', 'projectInput'];
+  const selects = ['statusFilterSelect', 'sortSelect', 'statusInput', 'projectFilterSelect', 'projectInput', 'recurInput', 'templateSelect'];
   selects.forEach(id => {
     const el = document.getElementById(id);
     if(el) new CustomSelect(el);
   });
   
+  // Today's date in Dubai, shown in the header.
+  const todayEl = document.getElementById('todayLabel');
+  if (todayEl) {
+    const now = new Date();
+    todayEl.dateTime = now.toISOString();
+    todayEl.textContent = now.toLocaleDateString('en-AE', { timeZone: 'Asia/Dubai', weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
   const dueInput = document.getElementById('dueInput');
   if(dueInput) new CustomDatePicker(dueInput);
 });
