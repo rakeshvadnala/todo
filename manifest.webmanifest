@@ -1,0 +1,14 @@
+{
+  "name": "Flow — Daily Task Board",
+  "short_name": "Flow",
+  "description": "A local, offline Kanban to-do board.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0E131A",
+  "theme_color": "#0E131A",
+  "lang": "en-AE",
+  "icons": [
+    { "src": "image/todo-logo.png", "sizes": "256x256", "type": "image/png", "purpose": "any" }
+  ]
+}
