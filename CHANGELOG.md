@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented here.
 
+## [3.1.0]
+
+### Security
+- Master-password lock screen shown before any data loads; all data (including the GitHub token and backups) is encrypted at rest with AES-256-GCM, key derived via PBKDF2-SHA256 (600k). See `SECURITY.md`.
+- GitHub sync now pushes only the encrypted record. Optional recovery key, encrypted backup export, auto-lock on inactivity, manual lock (Ctrl+Shift+L), strict CSP.
+- Removed the casual PIN lock (superseded).
+
+### Changed
+- Daily due/overdue notification is on by default: one consolidated notice per day with titles, due dates and priorities; falls back to an in-app summary when system notifications are unavailable.
+
+## v3.0.0 (2026-11-11)
+
+### Added
+- Redesigned UI ("ledger" look): flat surfaces, hairline rules, serif headings, tabular numbers, neutral light/dark themes, six accent colours
+- Dubai/UAE localisation: DD Mon YYYY dates in Gulf time, Monday-first calendars with Sat/Sun weekend, Mon–Fri "weekday" repeats
+- Quick add with natural language (`Send report fri !high #Project every weekday @progress`) and a Ctrl/Cmd+K command palette
+- Recurring tasks, task activity log + comments, per-task time tracking, task templates
+- List, Calendar and Today views alongside the board; project tabs; card density (compact/comfortable/detailed); quick-complete checkbox
+- Custom columns (rename, reorder, add, delete)
+- CSV import/export (Excel-friendly), print / save as PDF
+- Streaks (weekends don't break them), weekly goal, focus panel in Insights
+- Settings: theme mode (incl. follow system), accent, reminders, PIN lock, automatic daily backups with restore
+- Delete profile (erases tasks, archive, projects, backups; synced deletions can't be resurrected by a pull)
+- Installable offline app (service worker + manifest); keyboard card moves (Alt+arrows)
+
+### Fixed
+- "Today", the 7-day chart and the calendar used UTC dates, which put tasks on the wrong day between midnight and 4am in Dubai
+
 ## v2.0.0 (2026-07-23)
 
 ### Added
